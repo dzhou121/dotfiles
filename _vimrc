@@ -98,3 +98,6 @@ let Tlist_Auto_Highlight_Tag = 1
 let Tlist_Exit_OnlyWindow = 1
 let Tlist_GainFocus_On_ToggleOpen = 1
 let Tlist_Use_Horiz_Window = 0
+
+" Run pep8
+let g:pep8_map='<leader>8'
