@@ -38,8 +38,8 @@ set expandtab
 set laststatus=2            " Always show statusline, even if only 1 window.
 set statusline=[%l,%v\ %P%M]\ %f\ %r%h%w\ (%{&ff})\ %{fugitive#statusline()}
 
-set ignorecase
-set smartcase
+" set ignorecase
+" set smartcase
 set smarttab
 set hlsearch
 set incsearch
