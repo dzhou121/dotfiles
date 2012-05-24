@@ -1,4 +1,6 @@
 #!/usr/bin/bash
 
-ln -s ./myvim/_vim ~/.vim
-ln -s ./myvim/_vimrc ~/.vimrc
+DIR=`pwd`
+
+ln -s $DIR/_vim ~/.vim
+ln -s $DIR/_vimrc ~/.vimrc
