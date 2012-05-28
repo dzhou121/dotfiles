@@ -11,7 +11,7 @@ syntax on
 
 filetype on
 filetype plugin indent on
-set number
+set relativenumber
 set numberwidth=1
 set background=dark
 set title
@@ -38,8 +38,10 @@ set expandtab
 set laststatus=2            " Always show statusline, even if only 1 window.
 set statusline=[%l,%v\ %P%M]\ %f\ %r%h%w\ (%{&ff})\ %{fugitive#statusline()}
 
-" set ignorecase
-" set smartcase
+nnoremap / /\V
+vnoremap / /\V
+set ignorecase
+set smartcase
 set smarttab
 set hlsearch
 set incsearch
@@ -53,7 +55,7 @@ set showcmd
 set report=0
 
 " displays tabs with :set list & displays when a line runs off-screen
-set listchars=tab:>-,eol:$,trail:-,precedes:<,extends:>
+set listchars=tab:>-,eol:¬,trail:-,precedes:<,extends:>
 
 set colorcolumn=79
 set guifont=Monospace\ 11
@@ -91,6 +93,7 @@ let g:acp_behaviorPythonOmniLength = -1
 let g:acp_completeoptPreview = 1
 
 map <leader>f :FufFile **/<CR>
+map <leader>b :FufBuffer<CR>
 
 map <leader>t :TlistToggle<CR>
 let Tlist_Use_Right_Window = 0
@@ -101,3 +104,14 @@ let Tlist_Use_Horiz_Window = 0
 
 " Run pep8
 let g:pep8_map='<leader>8'
+
+set wrap
+set textwidth=79
+set wrapmargin=0
+autocmd BufNewFile,BufRead * setlocal formatoptions+=cqt
+
+nnoremap <leader>y V`]
+nnoremap <leader>l :set list!<CR>
+
+inoremap jj <ESC>
+nnoremap <leader>v <C-w>v<C-w>l
