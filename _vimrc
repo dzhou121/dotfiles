@@ -35,6 +35,8 @@ set tabstop=4
 set shiftwidth=4
 set softtabstop=4
 set expandtab
+set ttyfast
+set undofile
 set laststatus=2            " Always show statusline, even if only 1 window.
 set statusline=[%l,%v\ %P%M]\ %f\ %r%h%w\ (%{&ff})\ %{fugitive#statusline()}
 
@@ -45,6 +47,7 @@ set smartcase
 set smarttab
 set hlsearch
 set incsearch
+set showmatch
 
 set noautowrite
 set noautowriteall
@@ -57,7 +60,7 @@ set report=0
 " displays tabs with :set list & displays when a line runs off-screen
 set listchars=tab:>-,eol:¬,trail:-,precedes:<,extends:>
 
-set colorcolumn=79
+autocmd BufNewFile,BufRead *.py setlocal colorcolumn=79
 set guifont=Monospace\ 11
 
 if has("gui_running")
@@ -114,4 +117,6 @@ nnoremap <leader>y V`]
 nnoremap <leader>l :set list!<CR>
 
 inoremap jj <ESC>
-nnoremap <leader>v <C-w>v<C-w>l
+nnoremap <leader>v <C-w>v
+
+au FocusLost * :wa
