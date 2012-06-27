@@ -61,7 +61,8 @@ set report=0
 set listchars=tab:>-,eol:¬,trail:-,precedes:<,extends:>
 
 autocmd BufNewFile,BufRead *.py setlocal colorcolumn=79
-set guifont=Monospace\ 11
+set guifont=Monospace\ 10
+set linespace=2
 
 if has("gui_running")
     colorscheme desert
