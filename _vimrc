@@ -67,8 +67,11 @@ set linespace=2
 if has("gui_running")
     colorscheme desert
     set guioptions-=m
-    
     set guioptions-=T
+    set guioptions-=l
+    set guioptions-=L
+    set guioptions-=r
+    set guioptions-=b
 else
     colorscheme torte
 endif
