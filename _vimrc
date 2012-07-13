@@ -72,14 +72,15 @@ if has("gui_running")
     set guioptions-=L
     set guioptions-=r
     set guioptions-=b
+    set lines=999 columns=999
 else
     colorscheme torte
 endif
 
 " Paste from clipboard
-map <leader>p "+p
-nnoremap <leader>q :q<CR>
-nnoremap <leader>w :w<CR>
+map <A-p> "+p
+nnoremap <A-q> :q<CR>
+nnoremap <A-w> :w<CR>
 
 " hide matches
 nnoremap <leader><space> :nohlsearch<cr>
@@ -96,11 +97,12 @@ map <leader>n :NERDTreeToggle<CR>
 " autocmd vimenter * if !argc() | NERDTree | endif
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 
+
 let g:acp_behaviorPythonOmniLength = -1 
 let g:acp_completeoptPreview = 1
 
-map <leader>f :FufFile **/<CR>
-map <leader>b :FufBuffer<CR>
+map <A-f> :FufFile **/<CR>
+map <A-b> :FufBuffer<CR>
 
 map <leader>t :TlistToggle<CR>
 let Tlist_Use_Right_Window = 0
@@ -110,7 +112,7 @@ let Tlist_GainFocus_On_ToggleOpen = 1
 let Tlist_Use_Horiz_Window = 0
 
 " Run pep8
-let g:pep8_map='<leader>8'
+let g:pep8_map='<A-8>'
 
 set wrap
 set textwidth=79
@@ -120,7 +122,19 @@ autocmd BufNewFile,BufRead * setlocal formatoptions+=cqt
 nnoremap <leader>y V`]
 nnoremap <leader>l :set list!<CR>
 
-inoremap jj <ESC>
-nnoremap <leader>v <C-w>v
+inoremap <A-j> <ESC>
+nnoremap <A-v> <C-w>v
+nnoremap <A-x> <C-w>x
+nnoremap <A-.> <C-w>>
+nnoremap <A-,> <C-w><
+nnoremap <A-l> <C-w>l
+nnoremap <A-h> <C-w>h
+nnoremap <A-j> <C-w>j
+nnoremap <A-k> <C-w>k
+
+autocmd vimenter * vsplit
+autocmd vimenter * vsplit
+autocmd vimenter * 5 wincmd <
+autocmd vimenter * wincmd l
 
 au FocusLost * :wa
