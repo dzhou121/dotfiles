@@ -13,7 +13,6 @@ filetype on
 filetype plugin indent on
 set relativenumber
 set numberwidth=1
-set background=dark
 set title
 set wildmenu
 set wildmode=full
@@ -65,7 +64,6 @@ set guifont=Inconsolata\ 10
 set linespace=2
 
 if has("gui_running")
-    colorscheme desert
     set guioptions-=m
     set guioptions-=T
     set guioptions-=l
@@ -73,9 +71,11 @@ if has("gui_running")
     set guioptions-=r
     set guioptions-=b
     set lines=999 columns=999
-else
-    colorscheme torte
 endif
+
+set background=dark
+colorscheme solarized
+call togglebg#map("<F5>")
 
 " Paste from clipboard
 map <A-p> "+p
