@@ -90,7 +90,8 @@ nnoremap <leader>S :%s/\s\+$//<cr>:let @/=''<CR>
 
 " Templates to HTML
 autocmd BufNewFile,BufRead *.mako,*.mak,*.jinja2 setlocal ft=html
-autocmd FileType html,xhtml,xml,css setlocal expandtab shiftwidth=2 tabstop=2
+autocmd BufNewFile,BufRead *.yml setlocal expandtab shiftwidth=2 tabstop=2
+autocmd FileType html,xhtml,xml,css,yml setlocal expandtab shiftwidth=2 tabstop=2
 
 map <leader>n :NERDTreeToggle<CR>
 " autocmd vimenter * NERDTree
@@ -132,9 +133,9 @@ nnoremap <A-h> <C-w>h
 nnoremap <A-j> <C-w>j
 nnoremap <A-k> <C-w>k
 
-autocmd vimenter * vsplit
-autocmd vimenter * vsplit
-autocmd vimenter * 5 wincmd <
-autocmd vimenter * wincmd l
+" autocmd vimenter * vsplit
+" autocmd vimenter * vsplit
+" autocmd vimenter * 5 wincmd <
+" autocmd vimenter * wincmd l
 
 au FocusLost * :wa
