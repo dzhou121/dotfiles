@@ -79,6 +79,9 @@ call togglebg#map("<F5>")
 
 " Paste from clipboard
 map <A-p> "+p
+" copy to clipboard
+map <A-y> "+yy
+
 nnoremap <A-q> :q<CR>
 nnoremap <A-w> :w<CR>
 
