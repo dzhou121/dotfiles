@@ -140,4 +140,7 @@ nnoremap <A-k> <C-w>k
 " autocmd vimenter * 5 wincmd <
 " autocmd vimenter * wincmd l
 
+" set tags path
+set tags=./tags,tags,~/tags
+
 au FocusLost * :wa
