@@ -144,3 +144,10 @@ nnoremap <A-k> <C-w>k
 set tags=./tags,tags,~/tags
 
 au FocusLost * :wa
+
+let ropevim_guess_project=1
+let ropevim_vim_completion=1
+let ropevim_enable_autoimport=1
+let ropevim_extended_complete=1
+let g:ropevim_autoimport_modules = ["os.*"]
+nnoremap <A-g> :call RopeGotoDefinition()<CR>
