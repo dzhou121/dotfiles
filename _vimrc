@@ -148,5 +148,4 @@ au FocusLost * :wa
 let ropevim_guess_project=1
 let ropevim_vim_completion=1
 let ropevim_enable_autoimport=1
-let ropevim_extended_complete=1
-nnoremap <A-n> :call RopeGotoDefinition()<CR>
+nnoremap <C-n> :call RopeGotoDefinition()<CR>
