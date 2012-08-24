@@ -91,13 +91,13 @@ class RopeMode(object):
                                    'create one?' % root):
                 self.env.message("Project creation aborted")
                 return
-        progress = self.env.create_progress('Opening [%s] project' % root)
+        #progress = self.env.create_progress('Opening [%s] project' % root)
         self.project = rope.base.project.Project(root)
         if self.env.get('enable_autoimport'):
             underlined = self.env.get('autoimport_underlineds')
             self.autoimport = autoimport.AutoImport(self.project,
                                                     underlined=underlined)
-        progress.done()
+        #progress.done()
 
     @decorators.global_command('k')
     def close_project(self):
