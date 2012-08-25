@@ -73,6 +73,10 @@ if has("gui_running")
     set lines=999 columns=999
 endif
 
+if has("gui_macvim")
+    set macmeta
+endif
+
 set background=dark
 colorscheme solarized
 call togglebg#map("<F5>")
