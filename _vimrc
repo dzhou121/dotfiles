@@ -35,7 +35,6 @@ set shiftwidth=4
 set softtabstop=4
 set expandtab
 set ttyfast
-set undofile
 set laststatus=2            " Always show statusline, even if only 1 window.
 set statusline=[%l,%v\ %P%M]\ %f\ %r%h%w\ (%{&ff})\ %{fugitive#statusline()}
 
@@ -153,3 +152,5 @@ let ropevim_guess_project=1
 let ropevim_vim_completion=1
 let ropevim_enable_autoimport=1
 nnoremap <C-n> :call RopeGotoDefinition()<CR>
+
+let g:ConqueTerm_TERM = 'xterm'
