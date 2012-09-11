@@ -98,7 +98,7 @@ autocmd BufNewFile,BufRead *.mako,*.mak,*.jinja2 setlocal ft=html
 autocmd BufNewFile,BufRead *.yml setlocal expandtab shiftwidth=2 tabstop=2
 autocmd FileType html,xhtml,xml,css,yml setlocal expandtab shiftwidth=2 tabstop=2
 
-map <leader>n :NERDTreeToggle<CR>
+map <A-n> :NERDTreeToggle<CR>
 " autocmd vimenter * NERDTree
 " autocmd vimenter * if !argc() | NERDTree | endif
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
@@ -110,12 +110,17 @@ let g:acp_completeoptPreview = 1
 map <A-f> :FufFile **/<CR>
 map <A-b> :FufBuffer<CR>
 
-map <leader>t :TlistToggle<CR>
+map <A-t> :TlistToggle<CR>
 let Tlist_Use_Right_Window = 0
 let Tlist_Auto_Highlight_Tag = 1
 let Tlist_Exit_OnlyWindow = 1
-let Tlist_GainFocus_On_ToggleOpen = 1
+let Tlist_GainFocus_On_ToggleOpen = 0
 let Tlist_Use_Horiz_Window = 0
+let Tlist_File_Fold_Auto_Close = 0
+let Tlist_WinWidth = 50
+let Tlist_Auto_Open = 1
+let Tlist_Show_One_File = 1
+autocmd vimenter * TlistToggle
 
 " Run pep8
 let g:pep8_map='<A-8>'
