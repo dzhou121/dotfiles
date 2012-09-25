@@ -2,5 +2,6 @@
 
 DIR=`pwd`
 
-ln -s $DIR/_vim ~/.vim
-ln -s $DIR/_vimrc ~/.vimrc
+ln -s $DIR/.vim ~
+ln -s $DIR/.vimrc ~
+ln -s $DIR/.tmux.conf ~
