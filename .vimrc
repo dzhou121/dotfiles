@@ -118,9 +118,9 @@ let Tlist_GainFocus_On_ToggleOpen = 0
 let Tlist_Use_Horiz_Window = 0
 let Tlist_File_Fold_Auto_Close = 0
 let Tlist_WinWidth = 50
-let Tlist_Auto_Open = 1
+"let Tlist_Auto_Open = 1
 let Tlist_Show_One_File = 1
-autocmd vimenter * TlistToggle
+"autocmd vimenter * TlistToggle
 
 " Run pep8
 let g:pep8_map='<A-8>'
@@ -159,3 +159,36 @@ let ropevim_enable_autoimport=1
 nnoremap <C-n> :call RopeGotoDefinition()<CR>
 
 let g:ConqueTerm_TERM = 'xterm'
+
+" folding
+set foldmethod=indent
+set foldtext=CustomFoldText()
+"set foldtext=''
+hi Folded term=NONE cterm=NONE gui=NONE guibg=NONE guisp=NONE ctermfg=NONE ctermbg=NONE
+nnoremap <space> za
+au BufWinLeave * silent! mkview
+au BufWinEnter * silent! loadview
+
+fu! CustomFoldText()
+     "get first non-blank line
+     let fs = v:foldstart
+     while getline(fs) =~ '^\s*$' | let fs = nextnonblank(fs + 1)
+     endwhile
+     if fs > v:foldend
+         let line = getline(v:foldstart)
+     else
+         let line = substitute(getline(fs), '\t', repeat(' ', &tabstop), 'g')
+     endif
+ 
+     let w = winwidth(0) - &foldcolumn - (&number ? 8 : 0)
+     let foldSize = 1 + v:foldend - v:foldstart
+     let foldSizeStr = " " . foldSize . " lines "
+     let foldLevelStr = repeat("+--", v:foldlevel)
+     let lineCount = line("$")
+     let foldPercentage = printf("[%.1f", (foldSize*1.0)/lineCount*100) . "%] "
+     let expansionString = repeat("-", w - strwidth(foldSizeStr.line.foldLevelStr.foldPercentage))
+     return line . expansionString . foldSizeStr . foldPercentage . foldLevelStr
+endf
+
+" mini buf exploer
+let g:miniBufExplVSplit = 50
