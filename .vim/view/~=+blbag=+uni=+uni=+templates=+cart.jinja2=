@@ -45,7 +45,7 @@ setlocal foldminlines=1
 setlocal foldnestmax=20
 setlocal foldtext=CustomFoldText()
 setlocal formatexpr=
-setlocal formatoptions=lcqt
+setlocal formatoptions=tcq
 setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
 setlocal grepprg=
 setlocal iminsert=0
@@ -77,7 +77,7 @@ setlocal relativenumber
 setlocal norightleft
 setlocal rightleftcmd=search
 setlocal noscrollbind
-setlocal shiftwidth=2
+setlocal shiftwidth=4
 setlocal noshortname
 setlocal smartindent
 setlocal softtabstop=4
@@ -92,8 +92,8 @@ setlocal synmaxcol=3000
 if &syntax != 'html'
 setlocal syntax=html
 endif
-setlocal tabstop=2
-setlocal tags=./tags,tags,~/tags,~/blbag/uni/.git/html.tags,~/blbag/uni/.git/tags
+setlocal tabstop=4
+setlocal tags=
 setlocal textwidth=79
 setlocal thesaurus=
 setlocal noundofile
@@ -103,97 +103,57 @@ setlocal wrap
 setlocal wrapmargin=0
 7
 normal zo
-7
-normal zo
-8
-normal zo
 8
 normal zo
 9
 normal zo
-9
-normal zo
 10
-normal zo
-10
-normal zo
-11
 normal zo
 11
 normal zo
 12
 normal zo
+11
+normal zc
 18
-normal zo
-18
-normal zo
-21
 normal zo
 21
 normal zo
 22
 normal zo
-22
+25
 normal zo
-10
-normal zc
-48
+25
+normal zo
+40
+normal zo
+41
 normal zo
 48
 normal zo
 53
 normal zo
-53
-normal zo
 55
-normal zo
-55
-normal zo
-60
 normal zo
 60
 normal zo
 62
 normal zo
-62
-normal zo
 67
-normal zo
-67
-normal zo
-69
 normal zo
 69
 normal zo
 74
 normal zo
-74
-normal zo
-48
-normal zc
-84
+75
 normal zo
 85
 normal zo
-87
-normal zo
-85
-normal zc
 91
 normal zo
-93
-normal zo
-91
-normal zc
 97
 normal zo
-99
-normal zo
-97
-normal zc
 103
-normal zo
-104
 normal zo
 105
 normal zo
@@ -201,32 +161,20 @@ normal zo
 normal zo
 117
 normal zo
-119
-normal zo
 123
 normal zo
-125
-normal zo
 140
-normal zo
-140
-normal zo
-141
 normal zo
 141
 normal zo
 154
 normal zo
-154
-normal zo
-140
-normal zc
-let s:l = 108 - ((62 * winheight(0) + 26) / 53)
+let s:l = 106 - ((21 * winheight(0) + 26) / 53)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-108
-normal! 025l
+106
+normal! 036l
 lcd ~/blbag/uni
 let &so = s:so_save | let &siso = s:siso_save
 doautoall SessionLoadPost

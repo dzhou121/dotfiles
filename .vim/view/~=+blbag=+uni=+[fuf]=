@@ -15,6 +15,7 @@ inoremap <buffer> <silent>  =fuf#getRunningHandler().onSwitchMode(+1) ? "" :
 inoremap <buffer> <silent>  =fuf#getRunningHandler().onDeleteWord() ? "" : ""
 inoremap <buffer> <silent>  =fuf#getRunningHandler().onSwitchMode(-1) ? "" : ""
 inoremap <buffer> <silent>  =fuf#getRunningHandler().onSwitchMatching() ? "" : ""
+inoremap <buffer> <silent>  =fuf#getRunningHandler().onCr(-1) ? "" : ""
 inoremap <buffer> <silent>  =fuf#getRunningHandler().onRecallPattern(-1) ? "" : ""
 let &cpo=s:cpo_save
 unlet s:cpo_save
