@@ -1,25 +1,37 @@
 let s:so_save = &so | let s:siso_save = &siso | set so=0 siso=0
 argglobal
-noremap <buffer> <silent>  :PyflakesUpdate
-noremap <buffer> <silent> dw dw:PyflakesUpdate
-noremap <buffer> <silent> dd dd:PyflakesUpdate
-noremap <buffer> <silent> u u:PyflakesUpdate
-cnoremap <buffer> <expr>  fugitive#buffer().rev()
+let s:cpo_save=&cpo
+set cpo&vim
+inoremap <buffer> <silent> <Nul> =fuf#getRunningHandler().onPreviewBase(1) ? "" : ""
+inoremap <buffer> <silent> <BS> =fuf#getRunningHandler().onBs() ? "" : ""
+inoremap <buffer> <silent>  =fuf#getRunningHandler().onBs() ? "" : ""
+inoremap <buffer> <silent> <NL> =fuf#getRunningHandler().onCr(2) ? "" : ""
+inoremap <buffer> <silent>  =fuf#getRunningHandler().onCr(3) ? "" : ""
+inoremap <buffer> <silent>  =fuf#getRunningHandler().onCr(4) ? "" : ""
+inoremap <buffer> <silent>  =fuf#getRunningHandler().onCr(1) ? "" : ""
+inoremap <buffer> <silent>  =fuf#getRunningHandler().onRecallPattern(+1) ? "" : ""
+inoremap <buffer> <silent>  =fuf#getRunningHandler().onSwitchMode(+1) ? "" : ""
+inoremap <buffer> <silent>  =fuf#getRunningHandler().onDeleteWord() ? "" : ""
+inoremap <buffer> <silent>  =fuf#getRunningHandler().onSwitchMode(-1) ? "" : ""
+inoremap <buffer> <silent>  =fuf#getRunningHandler().onSwitchMatching() ? "" : ""
+inoremap <buffer> <silent>  =fuf#getRunningHandler().onRecallPattern(-1) ? "" : ""
+let &cpo=s:cpo_save
+unlet s:cpo_save
 setlocal keymap=
 setlocal noarabic
 setlocal autoindent
 setlocal balloonexpr=
 setlocal nobinary
-setlocal bufhidden=
+setlocal bufhidden=delete
 setlocal buflisted
-setlocal buftype=
+setlocal buftype=nofile
 setlocal nocindent
-setlocal cinkeys=0{,0},0),:,!^F,o,O,e
+setlocal cinkeys=0{,0},0),:,0#,!^F,o,O,e
 setlocal cinoptions=
 setlocal cinwords=if,else,while,do,for,switch
-setlocal colorcolumn=79
-setlocal comments=s1:/*,mb:*,ex:*/,://,b:#,:XCOMM,n:>,fb:-
-setlocal commentstring=#%s
+setlocal colorcolumn=
+setlocal comments=s1:/*,mb:*,ex:*/,://,b:#,:%,:XCOMM,n:>,fb:-
+setlocal commentstring=/*%s*/
 setlocal complete=.,w,b,u,t,i
 setlocal concealcursor=
 setlocal conceallevel=0
@@ -28,15 +40,15 @@ setlocal nocopyindent
 setlocal cryptmethod=
 setlocal nocursorbind
 setlocal nocursorcolumn
-setlocal cursorline
+setlocal nocursorline
 setlocal define=
 setlocal dictionary=
 setlocal nodiff
 setlocal equalprg=
 setlocal errorformat=
 setlocal expandtab
-if &filetype != 'python'
-setlocal filetype=python
+if &filetype != 'fuf'
+setlocal filetype=fuf
 endif
 setlocal foldcolumn=0
 setlocal foldenable
@@ -54,10 +66,10 @@ setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
 setlocal grepprg=
 setlocal iminsert=0
 setlocal imsearch=2
-setlocal include=s*\\(from\\|import\\)
-setlocal includeexpr=substitute(v:fname,'\\.','/','g')
-setlocal indentexpr=GetPythonIndent(v:lnum)
-setlocal indentkeys=!^F,o,O,<:>,0),0],0},=elif,=except
+setlocal include=
+setlocal includeexpr=
+setlocal indentexpr=
+setlocal indentkeys=0{,0},:,0#,!^F,o,O,e
 setlocal noinfercase
 setlocal iskeyword=@,48-57,_,192-255
 setlocal keywordprg=
@@ -71,7 +83,7 @@ setlocal modifiable
 setlocal nrformats=octal,hex
 setlocal nonumber
 setlocal numberwidth=1
-setlocal omnifunc=pythoncomplete#Complete
+setlocal omnifunc=fuf#onComplete
 setlocal path=
 setlocal nopreserveindent
 setlocal nopreviewwindow
@@ -90,11 +102,11 @@ setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
 setlocal spellfile=
 setlocal spelllang=en
 setlocal statusline=
-setlocal suffixesadd=.py
-setlocal swapfile
+setlocal suffixesadd=
+setlocal noswapfile
 setlocal synmaxcol=3000
-if &syntax != 'python'
-setlocal syntax=python
+if &syntax != 'fuf'
+setlocal syntax=fuf
 endif
 setlocal tabstop=4
 setlocal tags=
@@ -105,31 +117,13 @@ setlocal nowinfixheight
 setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
-9
-normal zo
-13
-normal zo
-13
-normal zc
-44
-normal zo
-45
-normal zo
-45
-normal zo
-52
-normal zo
-53
-normal zo
-52
-normal zc
-let s:l = 45 - ((44 * winheight(0) + 26) / 53)
+let s:l = 1 - ((0 * winheight(0) + 0) / 1)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-45
-normal! 024l
-lcd ~/blbag/uni
+1
+normal! 09l
+lcd ~/blbag/vast
 let &so = s:so_save | let &siso = s:siso_save
 doautoall SessionLoadPost
 " vim: set ft=vim :

@@ -49,7 +49,7 @@ setlocal foldminlines=1
 setlocal foldnestmax=20
 setlocal foldtext=CustomFoldText()
 setlocal formatexpr=
-setlocal formatoptions=tcq
+setlocal formatoptions=lcqt
 setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
 setlocal grepprg=
 setlocal iminsert=0
@@ -96,8 +96,8 @@ setlocal synmaxcol=3000
 if &syntax != 'python'
 setlocal syntax=python
 endif
-setlocal tabstop=4
-setlocal tags=
+setlocal tabstop=8
+setlocal tags=./tags,tags,~/tags,~/blbag/uni/.git/python.tags,~/blbag/uni/.git/tags
 setlocal textwidth=79
 setlocal thesaurus=
 setlocal noundofile
@@ -105,30 +105,12 @@ setlocal nowinfixheight
 setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
-9
-normal zo
-13
-normal zo
-13
-normal zc
-44
-normal zo
-45
-normal zo
-45
-normal zo
-52
-normal zo
-53
-normal zo
-52
-normal zc
-let s:l = 45 - ((44 * winheight(0) + 26) / 53)
+let s:l = 1 - ((0 * winheight(0) + 26) / 53)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-45
-normal! 024l
+1
+normal! 0
 lcd ~/blbag/uni
 let &so = s:so_save | let &siso = s:siso_save
 doautoall SessionLoadPost

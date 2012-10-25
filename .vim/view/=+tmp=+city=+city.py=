@@ -4,7 +4,6 @@ noremap <buffer> <silent>  :PyflakesUpdate
 noremap <buffer> <silent> dw dw:PyflakesUpdate
 noremap <buffer> <silent> dd dd:PyflakesUpdate
 noremap <buffer> <silent> u u:PyflakesUpdate
-cnoremap <buffer> <expr>  fugitive#buffer().rev()
 setlocal keymap=
 setlocal noarabic
 setlocal autoindent
@@ -49,11 +48,11 @@ setlocal foldminlines=1
 setlocal foldnestmax=20
 setlocal foldtext=CustomFoldText()
 setlocal formatexpr=
-setlocal formatoptions=tcq
+setlocal formatoptions=cqt
 setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
 setlocal grepprg=
 setlocal iminsert=0
-setlocal imsearch=2
+setlocal imsearch=0
 setlocal include=s*\\(from\\|import\\)
 setlocal includeexpr=substitute(v:fname,'\\.','/','g')
 setlocal indentexpr=GetPythonIndent(v:lnum)
@@ -96,7 +95,7 @@ setlocal synmaxcol=3000
 if &syntax != 'python'
 setlocal syntax=python
 endif
-setlocal tabstop=4
+setlocal tabstop=8
 setlocal tags=
 setlocal textwidth=79
 setlocal thesaurus=
@@ -105,31 +104,22 @@ setlocal nowinfixheight
 setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
-9
+486
 normal zo
-13
+487
 normal zo
-13
-normal zc
-44
+490
 normal zo
-45
+490
 normal zo
-45
+490
 normal zo
-52
-normal zo
-53
-normal zo
-52
-normal zc
-let s:l = 45 - ((44 * winheight(0) + 26) / 53)
+let s:l = 491 - ((47 * winheight(0) + 26) / 53)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-45
-normal! 024l
-lcd ~/blbag/uni
+491
+normal! 015l
 let &so = s:so_save | let &siso = s:siso_save
 doautoall SessionLoadPost
 " vim: set ft=vim :

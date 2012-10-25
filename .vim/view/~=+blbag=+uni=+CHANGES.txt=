@@ -1,9 +1,5 @@
 let s:so_save = &so | let s:siso_save = &siso | set so=0 siso=0
 argglobal
-noremap <buffer> <silent>  :PyflakesUpdate
-noremap <buffer> <silent> dw dw:PyflakesUpdate
-noremap <buffer> <silent> dd dd:PyflakesUpdate
-noremap <buffer> <silent> u u:PyflakesUpdate
 cnoremap <buffer> <expr>  fugitive#buffer().rev()
 setlocal keymap=
 setlocal noarabic
@@ -14,12 +10,12 @@ setlocal bufhidden=
 setlocal buflisted
 setlocal buftype=
 setlocal nocindent
-setlocal cinkeys=0{,0},0),:,!^F,o,O,e
+setlocal cinkeys=0{,0},0),:,0#,!^F,o,O,e
 setlocal cinoptions=
 setlocal cinwords=if,else,while,do,for,switch
-setlocal colorcolumn=79
-setlocal comments=s1:/*,mb:*,ex:*/,://,b:#,:XCOMM,n:>,fb:-
-setlocal commentstring=#%s
+setlocal colorcolumn=
+setlocal comments=s1:/*,mb:*,ex:*/,://,b:#,:%,:XCOMM,n:>,fb:-
+setlocal commentstring=/*%s*/
 setlocal complete=.,w,b,u,t,i
 setlocal concealcursor=
 setlocal conceallevel=0
@@ -35,8 +31,8 @@ setlocal nodiff
 setlocal equalprg=
 setlocal errorformat=
 setlocal expandtab
-if &filetype != 'python'
-setlocal filetype=python
+if &filetype != ''
+setlocal filetype=
 endif
 setlocal foldcolumn=0
 setlocal foldenable
@@ -49,15 +45,15 @@ setlocal foldminlines=1
 setlocal foldnestmax=20
 setlocal foldtext=CustomFoldText()
 setlocal formatexpr=
-setlocal formatoptions=tcq
+setlocal formatoptions=lcqt
 setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
 setlocal grepprg=
 setlocal iminsert=0
 setlocal imsearch=2
-setlocal include=s*\\(from\\|import\\)
-setlocal includeexpr=substitute(v:fname,'\\.','/','g')
-setlocal indentexpr=GetPythonIndent(v:lnum)
-setlocal indentkeys=!^F,o,O,<:>,0),0],0},=elif,=except
+setlocal include=
+setlocal includeexpr=
+setlocal indentexpr=
+setlocal indentkeys=0{,0},:,0#,!^F,o,O,e
 setlocal noinfercase
 setlocal iskeyword=@,48-57,_,192-255
 setlocal keywordprg=
@@ -90,14 +86,14 @@ setlocal spellcapcheck=[.?!]\\_[\\])'\"\	\ ]\\+
 setlocal spellfile=
 setlocal spelllang=en
 setlocal statusline=
-setlocal suffixesadd=.py
+setlocal suffixesadd=
 setlocal swapfile
 setlocal synmaxcol=3000
-if &syntax != 'python'
-setlocal syntax=python
+if &syntax != ''
+setlocal syntax=
 endif
 setlocal tabstop=4
-setlocal tags=
+setlocal tags=./tags,tags,~/tags,~/blbag/uni/.git/tags
 setlocal textwidth=79
 setlocal thesaurus=
 setlocal noundofile
@@ -105,30 +101,12 @@ setlocal nowinfixheight
 setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
-9
-normal zo
-13
-normal zo
-13
-normal zc
-44
-normal zo
-45
-normal zo
-45
-normal zo
-52
-normal zo
-53
-normal zo
-52
-normal zc
-let s:l = 45 - ((44 * winheight(0) + 26) / 53)
+let s:l = 1 - ((0 * winheight(0) + 26) / 53)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-45
-normal! 024l
+1
+normal! 0
 lcd ~/blbag/uni
 let &so = s:so_save | let &siso = s:siso_save
 doautoall SessionLoadPost

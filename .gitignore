@@ -3,3 +3,4 @@
 *.py~
 *.un~
 .vim/view/*
+.vim/view/*.*
