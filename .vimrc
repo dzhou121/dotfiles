@@ -107,9 +107,9 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTree
 let g:acp_behaviorPythonOmniLength = -1 
 let g:acp_completeoptPreview = 1
 
+" FuzzyFinder
 map <A-f> :FufFile **/<CR>
-map <A-b> :FufBuffer<CR>
-
+map <A-c> :FufBuffer ;<CR>
 map <A-t> :TlistToggle<CR>
 let Tlist_Use_Right_Window = 0
 let Tlist_Auto_Highlight_Tag = 1
@@ -119,8 +119,9 @@ let Tlist_Use_Horiz_Window = 0
 let Tlist_File_Fold_Auto_Close = 0
 let Tlist_WinWidth = 50
 "let Tlist_Auto_Open = 1
-let Tlist_Show_One_File = 1
-"autocmd vimenter * TlistToggle
+"let Tlist_Show_One_File = 1
+let g:fuf_file_exclude = '\.pyc'
+autocmd vimenter * TlistToggle
 
 " Run pep8
 let g:pep8_map='<A-8>'
@@ -143,11 +144,6 @@ nnoremap <A-h> <C-w>h
 nnoremap <A-j> <C-w>j
 nnoremap <A-k> <C-w>k
 
-" autocmd vimenter * vsplit
-" autocmd vimenter * vsplit
-" autocmd vimenter * 5 wincmd <
-" autocmd vimenter * wincmd l
-
 " set tags path
 set tags=./tags,tags,~/tags
 
@@ -157,8 +153,6 @@ let ropevim_guess_project=1
 let ropevim_vim_completion=1
 let ropevim_enable_autoimport=1
 nnoremap <C-n> :call RopeGotoDefinition()<CR>
-
-let g:ConqueTerm_TERM = 'xterm'
 
 " folding
 set foldmethod=indent
@@ -189,7 +183,3 @@ fu! CustomFoldText()
      let expansionString = repeat("-", w - strwidth(foldSizeStr.line.foldLevelStr.foldPercentage))
      return line . expansionString . foldSizeStr . foldPercentage . foldLevelStr
 endf
-
-" mini buf exploer
-let g:miniBufExplVSplit = 50
-let g:miniBufExplorerMoreThanOne=0

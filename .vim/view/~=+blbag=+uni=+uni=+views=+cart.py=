@@ -121,12 +121,13 @@ normal zo
 normal zo
 181
 normal zo
-let s:l = 147 - ((28 * winheight(0) + 26) / 53)
+let s:l = 161 - ((41 * winheight(0) + 26) / 53)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-147
+161
 normal! 0
+lcd ~/blbag/uni
 let &so = s:so_save | let &siso = s:siso_save
 doautoall SessionLoadPost
 " vim: set ft=vim :
