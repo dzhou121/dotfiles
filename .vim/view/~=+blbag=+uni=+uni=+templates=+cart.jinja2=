@@ -125,26 +125,28 @@ normal zo
 normal zo
 10
 normal zc
-86
+48
 normal zo
-86
+94
 normal zo
-87
+94
 normal zo
-87
+95
 normal zo
-100
+95
 normal zo
-100
+108
 normal zo
-86
+108
+normal zo
+94
 normal zc
-let s:l = 80 - ((79 * winheight(0) + 26) / 53)
+let s:l = 82 - ((81 * winheight(0) + 26) / 53)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-80
-normal! 0247l
+82
+normal! 0
 lcd ~/blbag/uni
 let &so = s:so_save | let &siso = s:siso_save
 doautoall SessionLoadPost

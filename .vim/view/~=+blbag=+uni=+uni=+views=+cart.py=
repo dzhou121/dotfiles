@@ -105,13 +105,28 @@ setlocal nowinfixheight
 setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
-let s:l = 179 - ((178 * winheight(0) + 26) / 53)
+128
+normal zo
+129
+normal zo
+138
+normal zo
+153
+normal zo
+155
+normal zo
+161
+normal zo
+181
+normal zo
+181
+normal zo
+let s:l = 147 - ((28 * winheight(0) + 26) / 53)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-179
+147
 normal! 0
-lcd ~/blbag/uni
 let &so = s:so_save | let &siso = s:siso_save
 doautoall SessionLoadPost
 " vim: set ft=vim :

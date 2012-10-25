@@ -192,3 +192,4 @@ endf
 
 " mini buf exploer
 let g:miniBufExplVSplit = 50
+let g:miniBufExplorerMoreThanOne=0
