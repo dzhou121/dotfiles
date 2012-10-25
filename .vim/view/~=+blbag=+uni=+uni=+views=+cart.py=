@@ -105,28 +105,28 @@ setlocal nowinfixheight
 setlocal nowinfixwidth
 setlocal wrap
 setlocal wrapmargin=0
-128
+130
 normal zo
-129
+131
 normal zo
-138
-normal zo
-153
+140
 normal zo
 155
 normal zo
-161
+157
 normal zo
-181
+163
 normal zo
-181
+183
 normal zo
-let s:l = 161 - ((41 * winheight(0) + 26) / 53)
+183
+normal zo
+let s:l = 191 - ((64 * winheight(0) + 26) / 53)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-161
-normal! 0
+191
+normal! 031l
 lcd ~/blbag/uni
 let &so = s:so_save | let &siso = s:siso_save
 doautoall SessionLoadPost

@@ -48,7 +48,7 @@ setlocal formatexpr=
 setlocal formatoptions=lcqt
 setlocal formatlistpat=^\\s*\\d\\+[\\]:.)}\\t\ ]\\s*
 setlocal grepprg=
-setlocal iminsert=2
+setlocal iminsert=0
 setlocal imsearch=2
 setlocal include=
 setlocal includeexpr=
@@ -123,30 +123,110 @@ normal zo
 normal zo
 12
 normal zo
+18
+normal zo
+18
+normal zo
+21
+normal zo
+21
+normal zo
+22
+normal zo
+22
+normal zo
 10
 normal zc
 48
 normal zo
-94
+48
 normal zo
-94
+53
 normal zo
-95
+53
 normal zo
-95
+55
 normal zo
-108
+55
 normal zo
-108
+60
 normal zo
-94
+60
+normal zo
+62
+normal zo
+62
+normal zo
+67
+normal zo
+67
+normal zo
+69
+normal zo
+69
+normal zo
+74
+normal zo
+74
+normal zo
+48
 normal zc
-let s:l = 114 - ((113 * winheight(0) + 26) / 53)
+84
+normal zo
+85
+normal zo
+87
+normal zo
+85
+normal zc
+91
+normal zo
+93
+normal zo
+91
+normal zc
+97
+normal zo
+99
+normal zo
+97
+normal zc
+103
+normal zo
+104
+normal zo
+105
+normal zo
+109
+normal zo
+117
+normal zo
+119
+normal zo
+123
+normal zo
+125
+normal zo
+140
+normal zo
+140
+normal zo
+141
+normal zo
+141
+normal zo
+154
+normal zo
+154
+normal zo
+140
+normal zc
+let s:l = 108 - ((62 * winheight(0) + 26) / 53)
 if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
-114
-normal! 013l
+108
+normal! 025l
 lcd ~/blbag/uni
 let &so = s:so_save | let &siso = s:siso_save
 doautoall SessionLoadPost

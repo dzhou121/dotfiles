@@ -2,8 +2,8 @@ let s:so_save = &so | let s:siso_save = &siso | set so=0 siso=0
 argglobal
 let s:cpo_save=&cpo
 set cpo&vim
-inoremap <buffer> <silent> <BS> =fuf#getRunningHandler().onBs() ? "" : ""
 inoremap <buffer> <silent> <Nul> =fuf#getRunningHandler().onPreviewBase(1) ? "" : ""
+inoremap <buffer> <silent> <BS> =fuf#getRunningHandler().onBs() ? "" : ""
 inoremap <buffer> <silent>  =fuf#getRunningHandler().onBs() ? "" : ""
 inoremap <buffer> <silent> <NL> =fuf#getRunningHandler().onCr(2) ? "" : ""
 inoremap <buffer> <silent>  =fuf#getRunningHandler().onCr(3) ? "" : ""
@@ -15,7 +15,6 @@ inoremap <buffer> <silent>  =fuf#getRunningHandler().onSwitchMode(+1) ? "" :
 inoremap <buffer> <silent>  =fuf#getRunningHandler().onDeleteWord() ? "" : ""
 inoremap <buffer> <silent>  =fuf#getRunningHandler().onSwitchMode(-1) ? "" : ""
 inoremap <buffer> <silent>  =fuf#getRunningHandler().onSwitchMatching() ? "" : ""
-inoremap <buffer> <silent>  =fuf#getRunningHandler().onCr(-1) ? "" : ""
 inoremap <buffer> <silent>  =fuf#getRunningHandler().onRecallPattern(-1) ? "" : ""
 let &cpo=s:cpo_save
 unlet s:cpo_save
@@ -124,7 +123,7 @@ if s:l < 1 | let s:l = 1 | endif
 exe s:l
 normal! zt
 1
-normal! 025l
+normal! 024l
 lcd ~/blbag/uni
 let &so = s:so_save | let &siso = s:siso_save
 doautoall SessionLoadPost

@@ -120,7 +120,7 @@ let Tlist_File_Fold_Auto_Close = 0
 let Tlist_WinWidth = 50
 "let Tlist_Auto_Open = 1
 "let Tlist_Show_One_File = 1
-let g:fuf_file_exclude = '\.pyc'
+let g:fuf_file_exclude = '\.pyc|\.sw*'
 autocmd vimenter * TlistToggle
 
 " Run pep8
