@@ -1,8 +1,7 @@
 /**TODO:
     1. Activites button position
-    4. Include recent documents with clear list
  */
-const Version = '0.8.1';
+const Version = '0.8.2';
 const ShellVersion = imports.misc.config.PACKAGE_VERSION.split(".");
 const Mainloop = imports.mainloop;
 const GMenu = imports.gi.GMenu;

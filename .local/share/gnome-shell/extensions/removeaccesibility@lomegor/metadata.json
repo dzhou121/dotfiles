@@ -4,9 +4,10 @@
   "name": "Remove Accessibility", 
   "shell-version": [
     "3.2", 
-    "3.4"
+    "3.4", 
+    "3.6"
   ], 
   "url": "", 
   "uuid": "removeaccesibility@lomegor", 
-  "version": 12
+  "version": 14
 }
