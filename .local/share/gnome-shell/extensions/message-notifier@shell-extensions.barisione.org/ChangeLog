@@ -1,3 +1,53 @@
+commit 8e7f31e4eb75bc5288f3ba5654a9eccb8de62bc6
+Author: Guillaume Desmottes <guillaume.desmottes@collabora.co.uk>
+Date:   Wed Oct 10 13:02:36 2012 +0200
+
+    change default key opening the notifier menu
+    
+    Super+M is now used by the Shell to open the message tray.
+
+commit b664e6f39ee59a8fa24a0f94982e32e43fdfeb79
+Author: Guillaume Desmottes <guillaume.desmottes@collabora.co.uk>
+Date:   Wed Oct 10 13:00:05 2012 +0200
+
+    port to new Source count code
+
+commit ac2ad42e6f0cc223aedae2e3a02d41e38acf92c1
+Author: Guillaume Desmottes <guillaume.desmottes@collabora.co.uk>
+Date:   Wed Oct 10 12:58:41 2012 +0200
+
+    metadata.json: update shell-version
+
+commit 2270ce8dc7986f4cd67ed6a1a49870463295f70a
+Author: Marco Barisione <marco@barisione.org>
+Date:   Tue Jul 31 14:10:30 2012 +0200
+
+    Improve debugging instructions and add my email address
+
+commit f8c6e2d1e330feb8cc12ad614684ac3af59ef15a
+Author: Marco Barisione <marco@barisione.org>
+Date:   Tue Jul 31 13:58:18 2012 +0200
+
+    Add a list of supported programs and how to get them to work
+
+commit 473cac14957b5562894dcf920e3a07967b492792
+Author: Marco Barisione <marco@barisione.org>
+Date:   Tue Jul 31 10:50:42 2012 +0200
+
+    Move the debugging instructions from the README to debugging.txt
+
+commit cb91f264df5b6a372396c005ac01abfeda8708c5
+Author: Marco Barisione <marco@barisione.org>
+Date:   Sun Jul 29 12:26:04 2012 +0200
+
+    Improve a bit the phrasing of various sentences in the README file
+
+commit 33767e3811ef93fe5003763acf1efaa271b92f32
+Author: Marco Barisione <marco@barisione.org>
+Date:   Sun Jul 29 12:09:38 2012 +0200
+
+    Add a “.” at the end of the description
+
 commit bc25bfc79b29ddff24b71cb2db202cedb5a9e2df
 Author: Marco Barisione <marco@barisione.org>
 Date:   Sat Jul 28 16:25:50 2012 +0200

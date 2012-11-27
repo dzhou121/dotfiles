@@ -5,26 +5,27 @@ const Clutter = imports.gi.Clutter;
 const Gio = imports.gi.Gio;
 const Lang = imports.lang;
 const Shell = imports.gi.Shell;
+const Signals = imports.signals;
 const St = imports.gi.St;
 const Mainloop = imports.mainloop;
 
 const AppFavorites = imports.ui.appFavorites;
 const Main = imports.ui.main;
+const Panel = imports.ui.panel;
+const SessionMode = imports.ui.sessionMode;
 const Tweener = imports.ui.tweener;
 
 const PANEL_LAUNCHER_LABEL_SHOW_TIME = 0.15;
 const PANEL_LAUNCHER_LABEL_HIDE_TIME = 0.1;
 const PANEL_LAUNCHER_HOVER_TIMEOUT = 300;
 
-function PanelLauncher(app) {
-    this._init(app);
-}
+const PanelLauncher = new Lang.Class({
+    Name: 'PanelLauncher',
 
-PanelLauncher.prototype = {
     _init: function(app) {
-        this.actor = new St.Button({ style_class: 'panel-launcher',
+        this.actor = new St.Button({ style_class: 'panel-button',
                                      reactive: true });
-        let icon = app.create_icon_texture(18);
+        let icon = app.create_icon_texture(24);
         this.actor.set_child(icon);
         this.actor._delegate = this;
         let text = app.get_name();
@@ -105,13 +106,11 @@ PanelLauncher.prototype = {
         this.label.destroy();
         this.actor.destroy();
     }
-};
+});
 
-function PanelFavorites() {
-    this._init();
-}
+const PanelFavorites = new Lang.Class({
+    Name: 'PanelFavorites',
 
-PanelFavorites.prototype = {
     _init: function() {
         this._showLabelTimeoutId = 0;
         this._resetHoverTimeoutId = 0;
@@ -121,8 +120,13 @@ PanelFavorites.prototype = {
                                         style_class: 'panel-favorites' });
         this._display();
 
-        Shell.AppSystem.get_default().connect('installed-changed', Lang.bind(this, this._redisplay));
-        AppFavorites.getAppFavorites().connect('changed', Lang.bind(this, this._redisplay));
+        this.container = new St.Bin({ y_fill: true,
+                                      x_fill: true,
+                                      child: this.actor });
+
+        this.actor.connect('destroy', Lang.bind(this, this._onDestroy));
+        this._installChangedId = Shell.AppSystem.get_default().connect('installed-changed', Lang.bind(this, this._redisplay));
+        this._changedId = AppFavorites.getAppFavorites().connect('changed', Lang.bind(this, this._redisplay));
     },
 
     _redisplay: function() {
@@ -190,15 +194,65 @@ PanelFavorites.prototype = {
         }
     },
 
-    enable: function() {
-        Main.panel._leftBox.insert_child_at_index(this.actor, 1);
-    },
+    _onDestroy: function() {
+        if ( this._installChangedId != 0 ) {
+            Shell.AppSystem.get_default().disconnect(this._installChangedId);
+            this._installChangedId = 0;
+        }
 
-    disable: function() {
-        Main.panel._leftBox.remove_actor(this.actor);
+        if ( this._changedId != 0 ) {
+            AppFavorites.getAppFavorites().disconnect(this._changedId);
+            this._changedId = 0;
+        }
     }
-};
+});
+Signals.addSignalMethods(PanelFavorites.prototype);
+
+function enable() {
+    Panel.PANEL_ITEM_IMPLEMENTATIONS['panelFavorites'] = PanelFavorites;
+
+    let panel = SessionMode._modes['user'].panel;
+    let act_index, app_index, fav_index;
+
+    act_index = panel.left.indexOf('activities');
+    app_index = panel.left.indexOf('appMenu');
+    fav_index = panel.left.indexOf('panelFavorites');
+    if ( act_index > -1 && fav_index == -1 ) {
+        // add favorites to right of activities
+        panel.left.splice(act_index+1, 0, 'panelFavorites');
+        Main.panel._updatePanel();
+    }
+    else if ( app_index >= 1 && fav_index == -1 ) {
+        // add favorites to left of app menu
+        panel.left.splice(app_index, 0, 'panelFavorites');
+        Main.panel._updatePanel();
+    }
+    else if ( fav_index == -1 ) {
+        // add favorites to right end of left panel
+        panel.left.push('panelFavorites');
+        Main.panel._updatePanel();
+    }
+}
+
+function disable() {
+    delete Panel.PANEL_ITEM_IMPLEMENTATIONS['panelFavorites'];
+
+    let panel = SessionMode._modes['user'].panel;
+    let index = panel.left.indexOf('panelFavorites');
+    let indicator = Main.panel.statusArea['panelFavorites'];
+
+    if ( index > -1 ) {
+        panel.left.splice(index, 1);
+
+        if ( indicator != null ) {
+            Main.panel._leftBox.remove_actor(indicator.container);
+            indicator.container.destroy();
+            delete Main.panel.statusArea['panelFavorites'];
+        }
+
+        Main.panel._updatePanel();
+    }
+}
 
 function init() {
-    return new PanelFavorites();
 }

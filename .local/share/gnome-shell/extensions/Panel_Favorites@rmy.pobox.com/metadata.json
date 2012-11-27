@@ -3,9 +3,9 @@
   "description": "Add launchers for Favorites to the panel", 
   "name": "Frippery Panel Favorites", 
   "shell-version": [
-    "3.4"
+    "3.6"
   ], 
   "url": "http://intgat.tigress.co.uk/rmy/extensions/index.html", 
   "uuid": "Panel_Favorites@rmy.pobox.com", 
-  "version": 5
+  "version": 8
 }
