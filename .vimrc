@@ -149,10 +149,14 @@ set tags=./tags,tags,~/tags
 
 au FocusLost * :wa
 
-let ropevim_guess_project=1
-let ropevim_vim_completion=1
-let ropevim_enable_autoimport=1
-nnoremap <C-n> :call RopeGotoDefinition()<CR>
+" jedi-vim 
+let g:jedi#use_tabs_not_buffers = 0
+let g:jedi#goto_command = "<C-n>"
+let g:jedi#show_function_definition = 0
+"let ropevim_guess_project=1
+"let ropevim_vim_completion=1
+"let ropevim_enable_autoimport=1
+"nnoremap <C-n> :call RopeGotoDefinition()<CR>
 
 " folding
 set foldmethod=indent
