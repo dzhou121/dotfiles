@@ -20,8 +20,7 @@ set wildmode=full
 set completeopt=menuone,longest,preview
 set pumheight=6
 
-au FileType python set omnifunc=pythoncomplete#Complete
-au FileType python setlocal expandtab shiftwidth=4 tabstop=8 softtabstop=4 smartindent
+au FileType python setlocal expandtab shiftwidth=4 tabstop=8 softtabstop=4 smartindent textwidth=79 colorcolumn=79
 
 set cursorline
 set scrolloff=3
@@ -58,7 +57,6 @@ set report=0
 " displays tabs with :set list & displays when a line runs off-screen
 set listchars=tab:>-,eol:¬,trail:-,precedes:<,extends:>
 
-autocmd BufNewFile,BufRead *.py setlocal colorcolumn=79
 set guifont=Inconsolata\ 10
 set linespace=2
 
@@ -95,7 +93,6 @@ nnoremap <leader>S :%s/\s\+$//<cr>:let @/=''<CR>
 
 " Templates to HTML
 autocmd BufNewFile,BufRead *.mako,*.mak,*.jinja2 setlocal ft=html
-autocmd BufNewFile,BufRead *.yml setlocal expandtab shiftwidth=2 tabstop=2
 autocmd FileType html,xhtml,xml,css,yml setlocal expandtab shiftwidth=2 tabstop=2
 
 map <A-n> :NERDTreeToggle<CR>
@@ -127,7 +124,6 @@ autocmd vimenter * TlistToggle
 let g:pep8_map='<A-8>'
 
 set wrap
-set textwidth=79
 set wrapmargin=0
 autocmd BufNewFile,BufRead * setlocal formatoptions+=cqt
 
@@ -147,7 +143,7 @@ nnoremap <A-k> <C-w>k
 " set tags path
 set tags=./tags,tags,~/tags
 
-au FocusLost * :wa
+" au FocusLost * :wa
 
 " jedi-vim 
 let g:jedi#show_function_definition = 1
