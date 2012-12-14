@@ -200,7 +200,7 @@ class Parser(CachedModule):
             if name == '__builtin__' and not is_py3k:
                 name = 'builtins'
             path = os.path.dirname(os.path.abspath(__file__))
-            with open(os.path.sep.join([path, 'mixin', name]) + '.py') as f:
+            with open(os.path.sep.join([path, 'mixin', name]) + '.pym') as f:
                 s = f.read()
         except IOError:
             return {}
@@ -461,12 +461,11 @@ class Builtin(object):
                 FunctionType = types.FunctionType
             source = _generate_code(Container, depth=0)
             parser = parsing.PyFuzzyParser(source, None)
-            # needed for caching (because of weakref)
-            module = self.magic_func_module = parser.module
-            module.parent = lambda: self.scope
+            module = parser.module
+            module.parent = self.scope
             typ = evaluate.follow_path(iter(['FunctionType']), module, module)
 
-            self._magic_function_scope = s = typ.pop()
+            s = self._magic_function_scope = typ.pop()
             return s
 
 

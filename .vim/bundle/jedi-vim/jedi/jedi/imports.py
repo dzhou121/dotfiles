@@ -4,7 +4,6 @@ import os
 import pkgutil
 import imp
 import sys
-import weakref
 import time
 
 import builtin
@@ -35,6 +34,13 @@ class ImportPath(parsing.Base):
 
         def get_imports(self):
             return []
+
+        @property
+        def start_pos(self):
+            return (0, 0)
+
+        def get_parent_until(self):
+            return None
 
     GlobalNamespace = _GlobalNamespace()
 
@@ -84,7 +90,7 @@ class ImportPath(parsing.Base):
         zero = (0, 0)
         n = parsing.Name(i.namespace.names[1:], zero, zero, self.import_stmt)
         new = parsing.Import(zero, zero, n)
-        new.parent = weakref.ref(parent)
+        new.parent = parent
         evaluate.faked_scopes.append(new)
         debug.dbg('Generated a nested import: %s' % new)
         return new
@@ -96,10 +102,11 @@ class ImportPath(parsing.Base):
                 if self.import_stmt.relative_count == 0:
                     names += self.get_module_names()
 
-                path = os.path.abspath(self.file_path)
-                for i in range(self.import_stmt.relative_count - 1):
-                    path = os.path.dirname(path)
-                names += self.get_module_names([path])
+                if self.file_path is not None:
+                    path = os.path.abspath(self.file_path)
+                    for i in range(self.import_stmt.relative_count - 1):
+                        path = os.path.dirname(path)
+                    names += self.get_module_names([path])
             else:
                 if on_import_stmt and isinstance(scope, parsing.Module) \
                                         and scope.path.endswith('__init__.py'):
@@ -299,7 +306,9 @@ def invalidate_star_import_cache(module, only_main=False):
         pass
 
     if not only_main:
-        for key, (t, mods) in star_import_cache.items():
+        # We need a list here because otherwise the list is being changed
+        # during the iteration in py3k: iteritems -> items.
+        for key, (t, mods) in list(star_import_cache.items()):
             if module in mods:
                 invalidate_star_import_cache(key)
 

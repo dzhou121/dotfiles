@@ -13,6 +13,7 @@ import builtin
 import debug
 import evaluate
 import settings
+import imports
 
 
 class Module(builtin.CachedModule):
@@ -61,6 +62,9 @@ class ModuleWithCursor(Module):
         """ get the parser lazy """
         if not self._parser:
             try:
+                ts, parser = builtin.CachedModule.cache[self.path]
+                imports.invalidate_star_import_cache(parser.module)
+
                 del builtin.CachedModule.cache[self.path]
             except KeyError:
                 pass
@@ -270,6 +274,9 @@ def sys_path_with_modifications(module):
                     sys_path.append(res)
                     debug.dbg('sys path added: %s' % res)
         return sys_path
+
+    if module.path is None:
+        return []  # support for modules without a path is intentionally bad.
 
     curdir = os.path.abspath(os.curdir)
     try:

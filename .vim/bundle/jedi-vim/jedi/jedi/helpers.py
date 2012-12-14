@@ -1,5 +1,4 @@
 import copy
-import weakref
 import contextlib
 
 import parsing
@@ -164,10 +163,10 @@ def fast_parent_copy(obj):
                     # parent can be a property
                     continue
                 try:
-                    setattr(new_obj, key, weakref.ref(new_elements[value()]))
+                    setattr(new_obj, key, new_elements[value])
                 except KeyError:
                     pass
-            elif key == 'parent_stmt':
+            elif key in ['parent_stmt', 'parent_function']:
                 continue
             elif isinstance(value, list):
                 setattr(new_obj, key, list_rec(value))
@@ -203,6 +202,7 @@ def generate_param_array(args_tuple, parent_stmt=None):
 def scan_array_for_pos(arr, pos):
     """
     Returns the function Call that match search_name in an Array.
+    Makes changes to arr!
     """
     def check_arr_index():
         positions = arr.arr_el_pos

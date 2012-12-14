@@ -6,10 +6,10 @@ import unittest
 from os.path import abspath, dirname
 import time
 import functools
+import itertools
 
-sys.path.append(abspath(dirname(abspath(__file__)) + '/../jedi'))
+sys.path.insert(0, abspath(dirname(abspath(__file__)) + '/../jedi'))
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + '/../jedi')
-sys.path.append('.')
 
 from _compatibility import is_py25, utf8
 import api
@@ -18,24 +18,48 @@ import api
 
 
 class Base(unittest.TestCase):
-    def get_def(self, src, pos):
-        script = api.Script(src, pos[0], pos[1], None)
+    def get_script(self, src, pos, path=None):
+        if pos is None:
+            lines = src.splitlines()
+            pos = len(lines), len(lines[-1])
+        return api.Script(src, pos[0], pos[1], path)
+
+    def get_def(self, src, pos=None):
+        script = self.get_script(src, pos)
         return script.get_definition()
 
-    def complete(self, src, pos=None):
-        if pos is None:
-            pos = 1, len(src)
-        script = api.Script(src, pos[0], pos[1], '')
+    def complete(self, src, pos=None, path=None):
+        script = self.get_script(src, pos, path)
         return script.complete()
 
+    def goto(self, src, pos=None):
+        script = self.get_script(src, pos)
+        return script.goto()
+
     def get_in_function_call(self, src, pos=None):
-        if pos is None:
-            pos = 1, len(src)
-        script = api.Script(src, pos[0], pos[1], '')
+        script = self.get_script(src, pos)
         return script.get_in_function_call()
 
 
 class TestRegression(Base):
+    def test_star_import_cache_duration(self):
+        new = 0.01
+        old, api.settings.star_import_cache_validity = \
+                api.settings.star_import_cache_validity, new
+
+        imports = api.imports
+        imports.star_import_cache = {}  # first empty...
+        # path needs to be not-None (otherwise caching effects are not visible)
+        api.Script('', 1,0, '').complete()
+        time.sleep(2*new)
+        api.Script('', 1,0, '').complete()
+
+        # reset values
+        api.settings.star_import_cache_validity = old
+        length = len(imports.star_import_cache)
+        imports.star_import_cache = {}
+        self.assertEqual(length, 1)
+
     def test_part_parser(self):
         """ test the get_in_function_call speedups """
         s = '\n' * 100 + 'abs('
@@ -114,11 +138,12 @@ class TestRegression(Base):
 
     def test_complete_on_empty_import(self):
         # should just list the files in the directory
-        assert 10 < len(self.complete("from .", (1, 5))) < 30
-        assert 10 < len(self.complete("from . import", (1, 5))) < 30
-        assert 10 < len(self.complete("from . import classes", (1, 5))) < 30
+        assert 10 < len(self.complete("from .", path='')) < 30
+        assert 10 < len(self.complete("from . import", (1, 5), '')) < 30
+        assert 10 < len(self.complete("from . import classes",
+                                        (1, 5), '')) < 30
         assert len(self.complete("import")) == 0
-        assert len(self.complete("import import")) > 0
+        assert len(self.complete("import import", path='')) > 0
 
     def test_get_in_function_call(self):
         def check(call_def, name, index):
@@ -183,6 +208,24 @@ class TestRegression(Base):
             "func(alpha='101',"
         assert check(self.get_in_function_call(s, (2, 13)), 'func', 0)
 
+    def test_get_in_function_call_complex(self):
+        def check(call_def, name, index):
+            return call_def and call_def.call_name == name \
+                            and call_def.index == index
+
+        s = """
+                def abc(a,b):
+                    pass
+
+                def a(self):
+                    abc(
+
+                if 1:
+                    pass
+            """
+        assert check(self.get_in_function_call(s, (6, 24)), 'abc', 0)
+
+
     def test_add_dynamic_mods(self):
         api.settings.additional_dynamic_modules = ['dynamic.py']
         # Fictional module that defines a function.
@@ -227,6 +270,30 @@ class TestRegression(Base):
         s = self.complete("import os; os.P_")
         assert 'P_NOWAIT' in [i.word for i in s]
 
+    def test_follow_definition(self):
+        """ github issue #45 """
+        c = self.complete("from datetime import timedelta; timedelta")
+        # type can also point to import, but there will be additional
+        # attributes
+        objs = itertools.chain.from_iterable(r.follow_definition() for r in c)
+        types = [o.type for o in objs]
+        assert 'Import' not in types and 'Class' in types
+
+    def test_keyword_definition_doc(self):
+        """ github jedi-vim issue #44 """
+        defs = self.get_def("print")
+        assert [d.doc for d in defs]
+
+        defs = self.get_def("import")
+        assert len(defs) == 1
+        assert [d.doc for d in defs]
+
+    def test_goto_following_on_imports(self):
+        if not is_py25:
+            g = self.goto("import multiprocessing.dummy; multiprocessing.dummy")
+            assert len(g) == 1
+            assert g[0].start_pos != (0, 0)
+
 
 class TestFeature(Base):
     def test_full_name(self):
@@ -242,10 +309,7 @@ class TestFeature(Base):
         import re
         any_re = re.compile('.*')
         any_re"""
-        lines = s.splitlines()
-        defs = self.get_def(s, (len(lines), len(lines[-1])))
-        self.assertEqual(defs[0].full_name,
-                         're.RegexObject')
+        self.assertEqual(self.get_def(s)[0].full_name, 're.RegexObject')
 
 
 class TestSpeed(Base):
@@ -263,7 +327,7 @@ class TestSpeed(Base):
                 for i in range(number):
                     func(self)
                 single_time = (time.time() - first) / number
-                print('speed', func, single_time)
+                print('\nspeed', func, single_time)
                 assert single_time < time_per_run
             return wrapper
         return decorated
@@ -279,7 +343,6 @@ class TestSpeed(Base):
         script = api.Script(s, 1, len(s), '')
         script.get_in_function_call()
         #print(api.imports.imports_processed)
-
 
 if __name__ == '__main__':
     unittest.main()
