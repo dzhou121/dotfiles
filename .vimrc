@@ -124,7 +124,6 @@ autocmd vimenter * TlistToggle
 let g:pep8_map='<A-8>'
 
 set wrap
-set wrapmargin=0
 autocmd BufNewFile,BufRead * setlocal formatoptions+=cqt
 
 nnoremap <leader>y V`]
