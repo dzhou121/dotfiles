@@ -36,11 +36,10 @@ class Keyword(object):
     def __init__(self, name, pos):
         self.name = name
         self.start_pos = pos
+        self.parent = builtin.Builtin.scope
 
-    def parent(self):
-        return builtin.Builtin.scope
-
-    get_parent_until = parent
+    def get_parent_until(self):
+        return self.parent
 
     @property
     def names(self):
@@ -81,4 +80,7 @@ def imitate_pydoc(string):
     except TypeError:
         return ''
 
-    return pydoc_topics.topics[label] if pydoc_topics else ''
+    try:
+        return pydoc_topics.topics[label] if pydoc_topics else ''
+    except KeyError:
+        return ''

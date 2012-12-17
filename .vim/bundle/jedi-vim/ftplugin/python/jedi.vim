@@ -8,6 +8,7 @@ if g:jedi#auto_initialization
     setlocal omnifunc=jedi#complete
     " map ctrl+space for autocompletion
     inoremap <buffer> <Nul> <C-X><C-O>
+    inoremap <buffer> <C-Space> <C-X><C-O>
 
     " goto / get_definition / related_names
     execute "noremap <buffer>".g:jedi#goto_command." :call jedi#goto()<CR>"
@@ -24,7 +25,11 @@ if g:jedi#auto_initialization
 end
 
 if g:jedi#popup_on_dot
-    inoremap <buffer> . .<C-R>=jedi#do_popup_on_dot() ? "\<lt>C-X>\<lt>C-O>\<lt>C-P>" : ""<CR>
+    if stridx(&completeopt, 'longest') > -1
+        inoremap <buffer> . .<C-R>=jedi#do_popup_on_dot() ? "\<lt>C-X>\<lt>C-O>" : ""<CR>
+    else
+        inoremap <buffer> . .<C-R>=jedi#do_popup_on_dot() ? "\<lt>C-X>\<lt>C-O>\<lt>C-P>" : ""<CR>
+    end
 end
 
 if g:jedi#auto_close_doc

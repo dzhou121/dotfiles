@@ -5,7 +5,7 @@ import re
 import traceback
 from os.path import abspath, dirname
 
-sys.path.append(abspath(dirname(abspath(__file__)) + '/../jedi'))
+sys.path.insert(0, abspath(dirname(abspath(__file__)) + '/../jedi'))
 os.chdir(dirname(abspath(__file__)) + '/../jedi')
 
 from _compatibility import unicode, StringIO, reduce, literal_eval, is_py25
@@ -266,7 +266,6 @@ if test_files or thirdparty:
 print('\nSummary: (%s fails)' % tests_fail)
 for s in summary:
     print(s)
-
 
 exit_code = 1 if tests_fail else 0
 if sys.hexversion < 0x02060000 and tests_fail <= 5:

@@ -27,7 +27,6 @@ from __future__ import with_statement
 __all__ = ['Script', 'NotFoundError', 'set_debug_function']
 
 import re
-import weakref
 
 import parsing
 import dynamic
@@ -91,6 +90,23 @@ class Script(object):
         :return: list of Completion objects, sorted by name and __ comes last.
         :rtype: list
         """
+        def follow_imports_if_possible(name):
+            # TODO remove this, or move to another place (not used)
+            par = name.parent
+            if isinstance(par, parsing.Import) and not \
+                        isinstance(self.parser.user_stmt, parsing.Import):
+                new = imports.ImportPath(par).follow(is_goto=True)
+                # Only remove the old entry if a new one has been found.
+                #print par, new, par.parent
+                if new:
+                    try:
+                        return new
+                    except AttributeError:  # .name undefined
+                        pass
+            return [name]
+
+
+        debug.speed('complete start')
         path = self.module.get_path_until_cursor()
         path, dot, like = self._get_completion_parts(path)
 
@@ -148,10 +164,14 @@ class Script(object):
                     or n.startswith(like):
                 if not evaluate.filter_private_variable(s,
                                                     self.parser.user_stmt, n):
-                    new = api_classes.Completion( c, needs_dot, len(like), s)
+                    new = api_classes.Completion(c, needs_dot,
+                                                    len(like), s)
                     comps.append(new)
 
+        debug.speed('complete end')
+
         return sorted(comps, key=lambda x: (x.word.startswith('__'),
+                                            x.word.startswith('_'),
                                             x.word.lower()))
 
     def _prepare_goto(self, goto_path, is_like_search=False):
@@ -160,6 +180,7 @@ class Script(object):
         debug.dbg('start: %s in %s' % (goto_path, self.parser.scope))
 
         user_stmt = self.parser.user_stmt
+        debug.speed('parsed')
         if not user_stmt and len(goto_path.split('\n')) > 1:
             # If the user_stmt is not defined and the goto_path is multi line,
             # something's strange. Most probably the backwards tokenizer
@@ -181,7 +202,7 @@ class Script(object):
         except IndexError:
             raise NotFoundError()
         stmt.start_pos = self.pos
-        stmt.parent = weakref.ref(self.parser.user_scope)
+        stmt.parent = self.parser.user_scope
         return stmt
 
     def get_definition(self):
@@ -221,7 +242,8 @@ class Script(object):
         # add keywords
         scopes |= keywords.get_keywords(string=goto_path, pos=self.pos)
 
-        d = set([api_classes.Definition(s) for s in scopes])
+        d = set([api_classes.Definition(s) for s in scopes
+                    if not isinstance(s, imports.ImportPath._GlobalNamespace)])
         return sorted(d, key=lambda x: (x.module_path, x.start_pos))
 
     def goto(self):
@@ -240,7 +262,22 @@ class Script(object):
     def _goto(self, add_import_name=False):
         """
         Used for goto and related_names.
+        :param add_import_name: TODO add description
         """
+        def follow_inexistent_imports(defs):
+            """ Imports can be generated, e.g. following
+            `multiprocessing.dummy` generates an import dummy in the
+            multiprocessing module. The Import doesn't exist -> follow.
+            """
+            definitions = set(defs)
+            for d in defs:
+                if isinstance(d.parent, parsing.Import) \
+                                        and d.start_pos == (0, 0):
+                    i = imports.ImportPath(d.parent).follow(is_goto=True)
+                    definitions.remove(d)
+                    definitions |= follow_inexistent_imports(i)
+            return definitions
+
         goto_path = self.module.get_path_under_cursor()
         context = self.module.get_context()
         if next(context) in ('class', 'def'):
@@ -262,7 +299,8 @@ class Script(object):
                     definitions.append(import_name[0])
         else:
             stmt = self._get_under_cursor_stmt(goto_path)
-            definitions, search_name = evaluate.goto(stmt)
+            defs, search_name = evaluate.goto(stmt)
+            definitions = follow_inexistent_imports(defs)
         return definitions, search_name
 
     def related_names(self, additional_module_paths=[]):

@@ -30,6 +30,17 @@ function! jedi#show_func_def()
     python jedi_vim.show_func_def()
 endfunction
 
+function! jedi#enable_speed_debugging()
+    python jedi_vim.jedi.set_debug_function(jedi_vim.print_to_stdout, speed=True, warnings=False, notices=False)
+endfunction
+
+function! jedi#enable_debugging()
+    python jedi_vim.jedi.set_debug_function(jedi_vim.print_to_stdout)
+endfunction
+
+function! jedi#disable_debugging()
+    python jedi_vim.jedi.set_debug_function(None)
+endfunction
 
 " ------------------------------------------------------------------------
 " show_pydoc
@@ -180,10 +191,12 @@ sys.path.insert(0, os.path.join(vim.eval('expand("<sfile>:p:h:h")'), 'jedi'))
 import traceback
 
 # update the sys path to include the jedi_vim script
-sys.path.append(os.path.join(vim.eval('expand("<sfile>:p:h:h")'), 'plugin'))
+sys.path.insert(1, os.path.join(vim.eval('expand("<sfile>:p:h:h")'), 'plugin'))
 import jedi_vim
-sys.path.pop()
+sys.path.pop(1)
 
 PYTHONEOF
+"python jedi_vim.jedi.set_debug_function(jedi_vim.print_to_stdout, speed=True, warnings=False, notices=False)
+"python jedi_vim.jedi.set_debug_function(jedi_vim.print_to_stdout)
 
 " vim: set et ts=4:

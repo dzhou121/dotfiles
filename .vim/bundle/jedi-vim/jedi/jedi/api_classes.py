@@ -5,11 +5,12 @@ import os
 
 import settings
 import evaluate
+import imports
 import parsing
 import keywords
 
 
-class BaseOutput(object):
+class BaseDefinition(object):
     _mapping = {'posixpath': 'os.path',
                'riscospath': 'os.path',
                'ntpath': 'os.path',
@@ -32,23 +33,29 @@ class BaseOutput(object):
         self.definition = definition
         self.is_keyword = isinstance(definition, keywords.Keyword)
 
-        # generate the type
-        self.stripped_definition = self.definition
-        if isinstance(self.definition, evaluate.InstanceElement):
-            self.stripped_definition = self.definition.var
-        self.type = type(self.stripped_definition).__name__
-
         # generate a path to the definition
         self.module_path = str(definition.get_parent_until().path)
-        self.path = []
-        if not isinstance(definition, keywords.Keyword):
-            par = definition
+
+    @property
+    def type(self):
+        # generate the type
+        stripped = self.definition
+        if isinstance(self.definition, evaluate.InstanceElement):
+            stripped = self.definition.var
+        return type(stripped).__name__
+
+    @property
+    def path(self):
+        path = []
+        if not isinstance(self.definition, keywords.Keyword):
+            par = self.definition
             while par is not None:
                 try:
-                    self.path.insert(0, par.name)
+                    path.insert(0, par.name)
                 except AttributeError:
                     pass
-                par = par.parent()
+                par = par.parent
+        return path
 
     @property
     def module_name(self):
@@ -86,7 +93,7 @@ class BaseOutput(object):
 
     @property
     def description(self):
-        raise NotImplementedError('Base Class')
+        return str(self.definition)
 
     @property
     def full_name(self):
@@ -109,16 +116,18 @@ class BaseOutput(object):
         return "<%s %s>" % (type(self).__name__, self.description)
 
 
-class Completion(BaseOutput):
+class Completion(BaseDefinition):
     """ `Completion` objects are returned from `Script.complete`. Providing
     some useful functions for IDE's. """
     def __init__(self, name, needs_dot, like_name_length, base):
-        super(Completion, self).__init__(name.parent(), name.start_pos)
+        super(Completion, self).__init__(name.parent, name.start_pos)
 
         self.name = name
         self.needs_dot = needs_dot
         self.like_name_length = like_name_length
         self.base = base
+
+        self._followed_definitions = None
 
     @property
     def complete(self):
@@ -154,7 +163,7 @@ class Completion(BaseOutput):
     def description(self):
         """ Provides a description of the completion object
         TODO return value is just __repr__ of some objects, improve! """
-        parent = self.name.parent()
+        parent = self.name.parent
         if parent is None:
             return ''
         t = self.type
@@ -166,16 +175,37 @@ class Completion(BaseOutput):
         line_nr = '' if self.in_builtin_module else '@%s' % self.line_nr
         return '%s: %s%s' % (t, desc, line_nr)
 
+    def follow_definition(self):
+        """ Returns you the original definitions. I strongly recommend not
+        using it for your completions, because it might slow down Jedi. If you
+        want to read only a few objects (<=20). I think it might be useful,
+        especially to get the original docstrings.
+        The basic problem of this function is that it follows all results. This
+        means with 1000 completions (e.g. numpy), it's just PITA slow.
+        """
+        if self._followed_definitions is None:
+            if self.definition.isinstance(parsing.Statement):
+                defs = evaluate.follow_statement(self.definition)
+            elif self.definition.isinstance(parsing.Import):
+                defs = imports.strip_imports([self.definition])
+            else:
+                return [self]
+
+            self._followed_definitions = \
+                            [BaseDefinition(d, d.start_pos) for d in defs]
+            evaluate.clear_caches()
+
+        return self._followed_definitions
+
     def __repr__(self):
         return '<%s: %s>' % (type(self).__name__, self.name)
 
 
-class Definition(BaseOutput):
+class Definition(BaseDefinition):
     """ These are the objects returned by either `Script.goto` or
     `Script.get_definition`. """
     def __init__(self, definition):
         super(Definition, self).__init__(definition, definition.start_pos)
-        self._def_parent = definition.parent()  # just here to limit gc
 
     @property
     def description(self):
@@ -185,7 +215,7 @@ class Definition(BaseOutput):
         if isinstance(d, evaluate.InstanceElement):
             d = d.var
         if isinstance(d, evaluate.parsing.Name):
-            d = d.parent()
+            d = d.parent
 
         if isinstance(d, evaluate.Array):
             d = 'class ' + d.type
@@ -217,7 +247,7 @@ class Definition(BaseOutput):
         return "%s:%s%s" % (self.module_name, self.description, position)
 
 
-class RelatedName(BaseOutput):
+class RelatedName(BaseDefinition):
     def __init__(self, name_part, scope):
         super(RelatedName, self).__init__(scope, name_part.start_pos)
         self.name_part = name_part
