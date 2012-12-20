@@ -18,6 +18,8 @@ import sys
 import itertools
 import copy
 
+import common
+import cache
 import parsing
 import debug
 import builtin
@@ -26,101 +28,12 @@ import helpers
 import dynamic
 import docstrings
 
-memoize_caches = []
-faked_scopes = []
-
 
 class DecoratorNotFound(LookupError):
     """
     Decorators are sometimes not found, if that happens, that error is raised.
     """
     pass
-
-
-class MultiLevelStopIteration(Exception):
-    """
-    StopIteration's get catched pretty easy by for loops, let errors propagate.
-    """
-    pass
-
-
-class MultiLevelAttributeError(Exception):
-    """
-    Important, because `__getattr__` and `hasattr` catch AttributeErrors
-    implicitly. This is really evil (mainly because of `__getattr__`).
-    `hasattr` in Python 2 is even more evil, because it catches ALL exceptions.
-    Therefore this class has to be a `BaseException` and not an `Exception`.
-    But because I rewrote hasattr, we can now switch back to `Exception`.
-
-    :param base: return values of sys.exc_info().
-    """
-    def __init__(self, base):
-        self.base = base
-
-    def __str__(self):
-        import traceback
-        tb = traceback.format_exception(*self.base)
-        return 'Original:\n\n' + ''.join(tb)
-
-
-def clear_caches():
-    """
-    Clears all caches of this and related modules. Jedi caches many things,
-    that should be completed after each completion finishes. The only things
-    that stays is the module cache (which is not deleted here).
-    """
-    global memoize_caches, faked_scopes
-
-    for m in memoize_caches:
-        m.clear()
-
-    dynamic.search_param_cache.clear()
-    helpers.ExecutionRecursionDecorator.reset()
-
-    # memorize_caches must never be deleted, because the dicts will get lost in
-    # the wrappers.
-    faked_scopes = []
-
-    follow_statement.reset()
-
-    imports.imports_processed = 0
-
-
-def memoize_default(default=None):
-    """
-    This is a typical memoization decorator, BUT there is one difference:
-    To prevent recursion it sets defaults.
-
-    Preventing recursion is in this case the much bigger use than speed. I
-    don't think, that there is a big speed difference, but there are many cases
-    where recursion could happen (think about a = b; b = a).
-    """
-    def func(function):
-        memo = {}
-        memoize_caches.append(memo)
-
-        def wrapper(*args, **kwargs):
-            key = (args, frozenset(kwargs.items()))
-            if key in memo:
-                return memo[key]
-            else:
-                memo[key] = default
-                rv = function(*args, **kwargs)
-                memo[key] = rv
-                return rv
-        return wrapper
-    return func
-
-
-class CachedMetaClass(type):
-    """
-    This is basically almost the same than the decorator above, it just caches
-    class initializations. I haven't found any other way, so I do it with meta
-    classes.
-    """
-    @memoize_default()
-    def __call__(self, *args, **kwargs):
-        return super(CachedMetaClass, self).__call__(*args, **kwargs)
 
 
 class Executable(parsing.Base):
@@ -140,7 +53,7 @@ class Executable(parsing.Base):
         return self.base.parent
 
 
-class Instance(use_metaclass(CachedMetaClass, Executable)):
+class Instance(use_metaclass(cache.CachedMetaClass, Executable)):
     """ This class is used to evaluate instances. """
     def __init__(self, base, var_args=None):
         super(Instance, self).__init__(base, var_args)
@@ -159,7 +72,7 @@ class Instance(use_metaclass(CachedMetaClass, Executable)):
         # (No var_args) used.
         self.is_generated = False
 
-    @memoize_default()
+    @cache.memoize_default()
     def get_init_execution(self, func):
         func = InstanceElement(self, func, True)
         return Execution(func, self.var_args)
@@ -227,7 +140,7 @@ class Instance(use_metaclass(CachedMetaClass, Executable)):
         args = helpers.generate_param_array(v)
         return self.execute_subscope_by_name('__get__', args)
 
-    @memoize_default([])
+    @cache.memoize_default([])
     def get_defined_names(self):
         """
         Get the instance vars of a class. This includes the vars of all
@@ -273,7 +186,7 @@ class Instance(use_metaclass(CachedMetaClass, Executable)):
                 (type(self).__name__, self.base, len(self.var_args or []))
 
 
-class InstanceElement(use_metaclass(CachedMetaClass)):
+class InstanceElement(use_metaclass(cache.CachedMetaClass)):
     """
     InstanceElement is a wrapper for any object, that is used as an instance
     variable (e.g. self.variable or class methods).
@@ -288,7 +201,7 @@ class InstanceElement(use_metaclass(CachedMetaClass)):
         self.is_class_var = is_class_var
 
     @property
-    @memoize_default()
+    @cache.memoize_default()
     def parent(self):
         par = self.var.parent
         if isinstance(par, Class) and par == self.instance.base \
@@ -317,8 +230,6 @@ class InstanceElement(use_metaclass(CachedMetaClass)):
         par = InstanceElement(self.instance, origin.parent_stmt,
                                                     self.is_class_var)
         new.parent_stmt = par
-        faked_scopes.append(par)
-        faked_scopes.append(new)
         return new
 
     def __getattr__(self, name):
@@ -331,7 +242,7 @@ class InstanceElement(use_metaclass(CachedMetaClass)):
         return "<%s of %s>" % (type(self).__name__, self.var)
 
 
-class Class(use_metaclass(CachedMetaClass, parsing.Base)):
+class Class(use_metaclass(cache.CachedMetaClass, parsing.Base)):
     """
     This class is not only important to extend `parsing.Class`, it is also a
     important for descriptors (if the descriptor methods are evaluated or not).
@@ -339,7 +250,7 @@ class Class(use_metaclass(CachedMetaClass, parsing.Base)):
     def __init__(self, base):
         self.base = base
 
-    @memoize_default(default=[])
+    @cache.memoize_default(default=[])
     def get_super_classes(self):
         supers = []
         # TODO care for mro stuff (multiple super classes).
@@ -355,7 +266,7 @@ class Class(use_metaclass(CachedMetaClass, parsing.Base)):
             supers += get_scopes_for_name(builtin.Builtin.scope, 'object')
         return supers
 
-    @memoize_default(default=[])
+    @cache.memoize_default(default=[])
     def get_defined_names(self):
         def in_iterable(name, iterable):
             """ checks if the name is in the variable 'iterable'. """
@@ -397,7 +308,7 @@ class Class(use_metaclass(CachedMetaClass, parsing.Base)):
         return "<e%s of %s>" % (type(self).__name__, self.base)
 
 
-class Function(use_metaclass(CachedMetaClass, parsing.Base)):
+class Function(use_metaclass(cache.CachedMetaClass, parsing.Base)):
     """
     Needed because of decorators. Decorators are evaluated here.
     """
@@ -408,7 +319,7 @@ class Function(use_metaclass(CachedMetaClass, parsing.Base)):
         self.is_decorated = is_decorated
 
     @property
-    @memoize_default()
+    @cache.memoize_default()
     def _decorated_func(self):
         """
         Returns the function, that is to be executed in the end.
@@ -432,7 +343,6 @@ class Function(use_metaclass(CachedMetaClass, parsing.Base)):
                 # Create param array.
                 old_func = Function(f, is_decorated=True)
                 params = helpers.generate_param_array([old_func], old_func)
-                faked_scopes.append(old_func)
 
                 wrappers = Execution(decorator, params).get_return_types()
                 if not len(wrappers):
@@ -481,7 +391,7 @@ class Execution(Executable):
     multiple calls to functions and recursion has to be avoided. But this is
     responsibility of the decorators.
     """
-    @memoize_default(default=[])
+    @cache.memoize_default(default=[])
     @helpers.ExecutionRecursionDecorator
     def get_return_types(self, evaluate_generator=False):
         """ Get the return types of a function. """
@@ -552,10 +462,11 @@ class Execution(Executable):
         else:
             stmts = []
             for r in self.returns:
-                stmts += follow_statement(r)
+                if r is not None:
+                    stmts += follow_statement(r)
             return stmts
 
-    @memoize_default(default=[])
+    @cache.memoize_default(default=[])
     def get_params(self):
         """
         This returns the params for an Execution/Instance and is injected as a
@@ -581,7 +492,6 @@ class Execution(Executable):
             new_param.is_generated = True
             name = copy.copy(param.get_name())
             name.parent = new_param
-            faked_scopes.append(new_param)
             return name
 
         result = []
@@ -709,7 +619,7 @@ class Execution(Executable):
                     else:
                         yield None, var_arg
 
-        return iter(parsing.PushBackIterator(iterate()))
+        return iter(common.PushBackIterator(iterate()))
 
     def get_set_vars(self):
         return self.get_defined_names()
@@ -732,12 +642,14 @@ class Execution(Executable):
         attr = getattr(self.base, prop)
         objects = []
         for element in attr:
-            copied = helpers.fast_parent_copy(element)
-            copied.parent = self._scope_copy(copied.parent)
-            if isinstance(copied, parsing.Function):
-                copied = Function(copied)
+            if element is None:
+                copied = element
+            else:
+                copied = helpers.fast_parent_copy(element)
+                copied.parent = self._scope_copy(copied.parent)
+                if isinstance(copied, parsing.Function):
+                    copied = Function(copied)
             objects.append(copied)
-            faked_scopes.append(copied)
         return objects
 
     def __getattr__(self, name):
@@ -745,7 +657,7 @@ class Execution(Executable):
             raise AttributeError('Tried to access %s: %s. Why?' % (name, self))
         return getattr(self.base, name)
 
-    @memoize_default()
+    @cache.memoize_default()
     def _scope_copy(self, scope):
         try:
             """ Copies a scope (e.g. if) in an execution """
@@ -758,28 +670,27 @@ class Execution(Executable):
             else:
                 copied = helpers.fast_parent_copy(scope)
                 copied.parent = self._scope_copy(copied.parent)
-                faked_scopes.append(copied)
                 return copied
         except AttributeError:
-            raise MultiLevelAttributeError(sys.exc_info())
+            raise common.MultiLevelAttributeError(sys.exc_info())
 
     @property
-    @memoize_default()
+    @cache.memoize_default()
     def returns(self):
         return self.copy_properties('returns')
 
     @property
-    @memoize_default()
+    @cache.memoize_default()
     def asserts(self):
         return self.copy_properties('asserts')
 
     @property
-    @memoize_default()
+    @cache.memoize_default()
     def statements(self):
         return self.copy_properties('statements')
 
     @property
-    @memoize_default()
+    @cache.memoize_default()
     def subscopes(self):
         return self.copy_properties('subscopes')
 
@@ -791,7 +702,7 @@ class Execution(Executable):
                 (type(self).__name__, self.base)
 
 
-class Generator(use_metaclass(CachedMetaClass, parsing.Base)):
+class Generator(use_metaclass(cache.CachedMetaClass, parsing.Base)):
     """ Cares for `yield` statements. """
     def __init__(self, func, var_args):
         super(Generator, self).__init__()
@@ -807,7 +718,8 @@ class Generator(use_metaclass(CachedMetaClass, parsing.Base)):
         none_pos = (0, 0)
         executes_generator = ('__next__', 'send')
         for n in ('close', 'throw') + executes_generator:
-            name = parsing.Name([(n, none_pos)], none_pos, none_pos)
+            name = parsing.Name(builtin.Builtin.scope, [(n, none_pos)],
+                                none_pos, none_pos)
             if n in executes_generator:
                 name.parent = self
             names.append(name)
@@ -830,7 +742,7 @@ class Generator(use_metaclass(CachedMetaClass, parsing.Base)):
         return "<%s of %s>" % (type(self).__name__, self.func)
 
 
-class Array(use_metaclass(CachedMetaClass, parsing.Base)):
+class Array(use_metaclass(cache.CachedMetaClass, parsing.Base)):
     """
     Used as a mirror to parsing.Array, if needed. It defines some getter
     methods which are important in this module.
@@ -994,7 +906,7 @@ def get_names_for_scope(scope, position=None, star_search=True,
                     yield scope, get_defined_names_for_position(scope,
                                                     position, in_func_scope)
             except StopIteration:
-                raise MultiLevelStopIteration('StopIteration raised somewhere')
+                raise common.MultiLevelStopIteration('StopIteration raised')
         if scope.isinstance(parsing.ForFlow) and scope.is_list_comp:
             # is a list comprehension
             yield scope, scope.get_set_vars(is_internal_call=True)
@@ -1154,13 +1066,17 @@ def get_scopes_for_name(scope, name_str, position=None, search_global=False,
                             if is_execution(a):
                                 return True
                         elif a.isinstance(parsing.Call):
-                            if a.name == name and a.execution:
+                            # Compare start_pos, because names may be different
+                            # because of executions.
+                            if a.name.start_pos == name.start_pos \
+                                                            and a.execution:
                                 return True
                     return False
 
                 is_exe = False
                 for op, assignee in par.assignment_details:
                     is_exe |= is_execution(assignee)
+
                 if is_exe:
                     # filter array[3] = ...
                     # TODO check executions for dict contents
@@ -1380,7 +1296,7 @@ def assign_tuples(tup, results, seek_name):
 
 
 @helpers.RecursionDecorator
-@memoize_default(default=[])
+@cache.memoize_default(default=[])
 def follow_statement(stmt, seek_name=None):
     """
     The starting point of the completion. A statement always owns a call list,
@@ -1400,7 +1316,7 @@ def follow_statement(stmt, seek_name=None):
     except AttributeError:
         # This is so evil! But necessary to propagate errors. The attribute
         # errors here must not be catched, because they shouldn't exist.
-        raise MultiLevelAttributeError(sys.exc_info())
+        raise common.MultiLevelAttributeError(sys.exc_info())
 
     # Assignment checking is only important if the statement defines multiple
     # variables.
@@ -1425,7 +1341,8 @@ def follow_call_list(call_list):
         if isinstance(nested_lc, parsing.ListComprehension):
             # is nested LC
             input = nested_lc.stmt
-        loop = parsing.ForFlow([input], lc.stmt.start_pos,
+        module = input.get_parent_until()
+        loop = parsing.ForFlow(module, [input], lc.stmt.start_pos,
                                                 lc.middle, True)
         if parent is None:
             loop.parent = lc.stmt.parent

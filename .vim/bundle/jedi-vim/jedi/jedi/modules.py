@@ -1,6 +1,6 @@
 from __future__ import with_statement
 
-from _compatibility import exec_function
+from _compatibility import exec_function, unicode
 
 import re
 import tokenize
@@ -8,10 +8,11 @@ import sys
 import os
 import time
 
+import cache
 import parsing
+import fast_parser
 import builtin
 import debug
-import evaluate
 import settings
 import imports
 
@@ -25,7 +26,7 @@ class Module(builtin.CachedModule):
     """
     def __init__(self, path, source):
         super(Module, self).__init__(path=path)
-        self.source = source
+        self.source = source_to_unicode(source)
         self._line_cache = None
 
     def _get_source(self):
@@ -71,8 +72,8 @@ class ModuleWithCursor(Module):
             # Call the parser already here, because it will be used anyways.
             # Also, the position is here important (which will not be used by
             # default), therefore fill the cache here.
-            self._parser = parsing.PyFuzzyParser(self.source, self.path,
-                                                                self.position)
+            self._parser = fast_parser.FastParser(self.source, self.path,
+                                                        self.position)
             if self.path is not None:
                 builtin.CachedModule.cache[self.path] = time.time(), \
                                                         self._parser
@@ -215,7 +216,7 @@ class ModuleWithCursor(Module):
         return self._part_parser
 
 
-@evaluate.memoize_default([])
+@cache.memoize_default([])
 def sys_path_with_modifications(module):
     def execute_code(code):
         c = "import os; from os.path import *; result=%s"
@@ -310,3 +311,33 @@ def detect_django_path(module_path):
         except IOError:
             pass
     return result
+
+
+def source_to_unicode(source, encoding=None):
+    def detect_encoding():
+        """ For the implementation of encoding definitions in Python, look at:
+        http://www.python.org/dev/peps/pep-0263/
+        http://docs.python.org/2/reference/lexical_analysis.html#encoding-\
+                                                                declarations
+        """
+        if encoding is not None:
+            return encoding
+
+        if source.startswith('\xef\xbb\xbf'):
+            # UTF-8 byte-order mark
+            return 'utf-8'
+
+        first_two_lines = re.match(r'(?:[^\n]*\n){0,2}', source).group(0)
+        possible_encoding = re.match("coding[=:]\s*([-\w.]+)", first_two_lines)
+        if possible_encoding:
+            return possible_encoding.group(1)
+        else:
+            # the default if nothing else has been set -> PEP 263
+            return 'iso-8859-1'
+
+    if isinstance(source, unicode):
+        # only cast str/bytes
+        return source
+
+    # cast to unicode by default
+    return unicode(source, detect_encoding(), 'replace')

@@ -6,9 +6,13 @@ let b:did_ftplugin = 1
 
 if g:jedi#auto_initialization
     setlocal omnifunc=jedi#complete
+
     " map ctrl+space for autocompletion
-    inoremap <buffer> <Nul> <C-X><C-O>
-    inoremap <buffer> <C-Space> <C-X><C-O>
+    if g:jedi#autocompletion_command == "<C-Space>"
+        " in terminals, <C-Space> sometimes equals <Nul>
+        inoremap <buffer><Nul> <C-X><C-O>
+    endif
+    execute "inoremap <buffer>".g:jedi#autocompletion_command." <C-X><C-O>"
 
     " goto / get_definition / related_names
     execute "noremap <buffer>".g:jedi#goto_command." :call jedi#goto()<CR>"
@@ -22,6 +26,10 @@ if g:jedi#auto_initialization
     if g:jedi#show_function_definition == 1 && has('conceal')
         call jedi#configure_function_definition()
     endif
+end
+
+if g:jedi#auto_vim_configuration
+    setlocal completeopt=menuone,longest,preview
 end
 
 if g:jedi#popup_on_dot

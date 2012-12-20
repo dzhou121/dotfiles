@@ -37,6 +37,7 @@ import debug
 import settings
 import keywords
 import helpers
+import common
 import builtin
 import api_classes
 
@@ -60,18 +61,14 @@ class Script(object):
     :type col: int
     :param source_path: The path in the os, the current module is in.
     :type source_path: string or None
-    :param source_encoding: encoding for decoding `source`, when it
+    :param source_encoding: encoding for decoding `source`, if it
                             is not a `unicode` object.
     :type source_encoding: string
     """
     def __init__(self, source, line, column, source_path,
-                 source_encoding='utf-8'):
+                                 source_encoding='utf-8'):
         debug.reset_time()
-        try:
-            source = unicode(source, source_encoding, 'replace')
-            # Use 'replace' over 'ignore' to hold code structure.
-        except TypeError:  # `source` is already a unicode object
-            pass
+        source = modules.source_to_unicode(source, source_encoding)
         self.pos = line, column
         self.module = modules.ModuleWithCursor(source_path, source=source,
                                                             position=self.pos)
@@ -105,9 +102,10 @@ class Script(object):
                         pass
             return [name]
 
-
         debug.speed('complete start')
         path = self.module.get_path_until_cursor()
+        if re.search('^\.|\.\.$', path):
+            return []
         path, dot, like = self._get_completion_parts(path)
 
         try:
@@ -177,7 +175,7 @@ class Script(object):
     def _prepare_goto(self, goto_path, is_like_search=False):
         """ Base for complete, goto and get_definition. Basically it returns
         the resolved scopes under cursor. """
-        debug.dbg('start: %s in %s' % (goto_path, self.parser.scope))
+        debug.dbg('start: %s in %s' % (goto_path, self.parser.user_scope))
 
         user_stmt = self.parser.user_stmt
         debug.speed('parsed')
@@ -196,7 +194,7 @@ class Script(object):
         return scopes
 
     def _get_under_cursor_stmt(self, cursor_txt):
-        r = parsing.PyFuzzyParser(cursor_txt, self.source_path, no_docstr=True)
+        r = parsing.PyFuzzyParser(cursor_txt, no_docstr=True)
         try:
             stmt = r.module.statements[0]
         except IndexError:
@@ -283,14 +281,14 @@ class Script(object):
         if next(context) in ('class', 'def'):
             user_scope = self.parser.user_scope
             definitions = set([user_scope.name])
-            search_name = str(user_scope.name)
+            search_name = unicode(user_scope.name)
         elif isinstance(self.parser.user_stmt, parsing.Import):
             s, name_part = self._get_on_import_stmt()
             try:
                 definitions = [s.follow(is_goto=True)[0]]
             except IndexError:
                 definitions = []
-            search_name = str(name_part)
+            search_name = unicode(name_part)
 
             if add_import_name:
                 import_name = self.parser.user_stmt.get_defined_names()
@@ -318,7 +316,7 @@ class Script(object):
                     and self.pos < user_stmt.get_assignment_calls().start_pos:
             # the search_name might be before `=`
             definitions = [v for v in user_stmt.set_vars
-                                                if str(v) == search_name]
+                                                if unicode(v) == search_name]
         if not isinstance(user_stmt, parsing.Import):
             # import case is looked at with add_import_name option
             definitions = dynamic.related_name_add_import_modules(definitions,
@@ -402,7 +400,7 @@ class Script(object):
                 return None
 
         debug.speed('func_call user_stmt')
-        with helpers.scale_speed_settings(settings.scale_get_in_function_call):
+        with common.scale_speed_settings(settings.scale_get_in_function_call):
             origins = evaluate.follow_call(call)
         debug.speed('func_call followed')
 
@@ -442,7 +440,7 @@ class Script(object):
         return match.groups()
 
     def __del__(self):
-        evaluate.clear_caches()
+        api_classes._clear_caches()
 
 
 def set_debug_function(func_cb=debug.print_to_stdout, warnings=True,

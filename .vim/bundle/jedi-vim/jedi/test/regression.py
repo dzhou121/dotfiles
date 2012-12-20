@@ -11,7 +11,7 @@ import itertools
 sys.path.insert(0, abspath(dirname(abspath(__file__)) + '/../jedi'))
 os.chdir(os.path.dirname(os.path.abspath(__file__)) + '/../jedi')
 
-from _compatibility import is_py25, utf8
+from _compatibility import is_py25, utf8, unicode
 import api
 
 #api.set_debug_function(api.debug.print_to_stdout)
@@ -50,9 +50,9 @@ class TestRegression(Base):
         imports = api.imports
         imports.star_import_cache = {}  # first empty...
         # path needs to be not-None (otherwise caching effects are not visible)
-        api.Script('', 1,0, '').complete()
-        time.sleep(2*new)
-        api.Script('', 1,0, '').complete()
+        api.Script('', 1, 0, '').complete()
+        time.sleep(2 * new)
+        api.Script('', 1, 0, '').complete()
 
         # reset values
         api.settings.star_import_cache_validity = old
@@ -224,7 +224,13 @@ class TestRegression(Base):
                     pass
             """
         assert check(self.get_in_function_call(s, (6, 24)), 'abc', 0)
-
+        s = """
+                import re
+                def huhu(it):
+                    re.compile(
+                    return it * 2
+            """
+        assert check(self.get_in_function_call(s, (4, 31)), 'compile', 0)
 
     def test_add_dynamic_mods(self):
         api.settings.additional_dynamic_modules = ['dynamic.py']
@@ -247,18 +253,25 @@ class TestRegression(Base):
 
     def test_unicode_script(self):
         """ normally no unicode objects are being used. (<=2.7) """
-        try:
-            s = unicode("import datetime; datetime.d")
-        except NameError:
-            pass  # python 3 has no unicode method
-        else:
-            assert len(self.complete(s))
+        s = unicode("import datetime; datetime.timedelta")
+        completions = self.complete(s)
+        assert len(completions)
+        assert type(completions[0].description) is unicode
+
+        s = utf8("author='öä'; author")
+        completions = self.complete(s)
+        assert type(completions[0].description) is unicode
+
+        s = utf8("#-*- coding: iso-8859-1 -*-\nauthor='öä'; author")
+        s = s.encode('latin-1')
+        completions = self.complete(s)
+        assert type(completions[0].description) is unicode
 
     def test_multibyte_script(self):
         """ `jedi.Script` must accept multi-byte string source. """
         try:
             code = unicode("import datetime; datetime.d")
-            comment = utf8("# multi-byte comment あいうえお")
+            comment = utf8("# multi-byte comment あいうえおä")
             s = (unicode('%s\n%s') % (code, comment)).encode('utf-8')
         except NameError:
             pass  # python 3 has no unicode method
@@ -289,10 +302,11 @@ class TestRegression(Base):
         assert [d.doc for d in defs]
 
     def test_goto_following_on_imports(self):
-        if not is_py25:
-            g = self.goto("import multiprocessing.dummy; multiprocessing.dummy")
-            assert len(g) == 1
-            assert g[0].start_pos != (0, 0)
+        if is_py25:
+            return
+        g = self.goto("import multiprocessing.dummy; multiprocessing.dummy")
+        assert len(g) == 1
+        assert g[0].start_pos != (0, 0)
 
 
 class TestFeature(Base):

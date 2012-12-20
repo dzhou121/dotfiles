@@ -9,6 +9,7 @@ from __future__ import with_statement
 
 import os
 
+import cache
 import parsing
 import modules
 import evaluate
@@ -18,6 +19,7 @@ import debug
 import builtin
 import imports
 import api_classes
+import fast_parser
 
 # This is something like the sys.path, but only for searching params. It means
 # that this is the order in which Jedi searches params.
@@ -40,7 +42,7 @@ def get_directory_modules_for_name(mods, name):
 
     def check_fs(path):
         with open(path) as f:
-            source = f.read()
+            source = modules.source_to_unicode(f.read())
             if name in source:
                 return modules.Module(path, source).parser.module
 
@@ -93,7 +95,7 @@ class ParamListener(object):
         self.param_possibilities.append(params)
 
 
-@evaluate.memoize_default([])
+@cache.memoize_default([])
 def search_params(param):
     """
     This is a dynamic search for params. If you try to complete a type:
@@ -202,28 +204,7 @@ def _scan_array(arr, search_name):
     return result
 
 
-counter = 0
-def dec(func):
-    """ TODO delete this """
-    def wrapper(*args, **kwargs):
-        global counter
-        element = args[0]
-        if isinstance(element, evaluate.Array):
-            stmt = element._array.parent_stmt
-        else:
-            # must be instance
-            stmt = element.var_args.parent_stmt
-        print('  ' * counter + 'recursion,', stmt)
-        counter += 1
-        res = func(*args, **kwargs)
-        counter -= 1
-        #print '  '*counter + 'end,'
-        return res
-    return wrapper
-
-
-#@dec
-@evaluate.memoize_default([])
+@cache.memoize_default([])
 def _check_array_additions(compare_array, module, is_list):
     """
     Checks if a `parsing.Array` has "add" statements:
@@ -460,7 +441,7 @@ def check_flow_information(flow, search_name, pos):
     ensures that `k` is a string.
     """
     result = []
-    if isinstance(flow, parsing.Scope) and not result:
+    if isinstance(flow, (parsing.Scope, fast_parser.Module)) and not result:
         for ass in reversed(flow.asserts):
             if pos is None or ass.start_pos > pos:
                 continue

@@ -62,6 +62,11 @@ you disable the auto-initialization in your ``.vimrc``::
 
     let g:jedi#auto_initialization = 0
 
+There are also some VIM options (like ``completeopt``) which are automatically
+initialized, if you don't want that:
+
+    let g:jedi#auto_vim_configuration = 0
+
 The goto is by default on <leader g>. If you want to change that::
 
     let g:jedi#goto_command = "<leader>g"
@@ -91,6 +96,10 @@ There's some support for refactoring::
 And you can list all names that are related (have the same origin)::
 
     let g:jedi#related_names_command = "<leader>n"
+
+If you want to change the default autocompletion command::
+
+    let g:jedi#autocompletion_command = "<C-Space>"
 
 By default you get a window that displays the function definition you're
 currently in. If you don't want that::

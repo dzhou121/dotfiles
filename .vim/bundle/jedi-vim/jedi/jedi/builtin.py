@@ -9,8 +9,10 @@ if is_py3k:
 import types
 import inspect
 
+import common
 import debug
 import parsing
+import fast_parser
 import imports
 import evaluate
 
@@ -66,7 +68,8 @@ class CachedModule(object):
 
     def _load_module(self):
         source = self._get_source()
-        self._parser = parsing.PyFuzzyParser(source, self.path or self.name)
+        p = self.path or self.name
+        self._parser = fast_parser.FastParser(source, p)
         p_time = None if not self.path else os.path.getmtime(self.path)
 
         if self.path or self.name:
@@ -197,6 +200,9 @@ class Parser(CachedModule):
 
         try:
             name = self.name
+            # sometimes there are stupid endings like `_sqlite3.cpython-32mu`
+            name = re.sub(r'\..*', '', name)
+
             if name == '__builtin__' and not is_py3k:
                 name = 'builtins'
             path = os.path.dirname(os.path.abspath(__file__))
@@ -222,7 +228,7 @@ def _generate_code(scope, mixin_funcs={}, depth=0):
         if doc:
             doc = ('r"""\n%s\n"""\n' % doc)
             if indent:
-                doc = parsing.indent_block(doc)
+                doc = common.indent_block(doc)
             return doc
         return ''
 
@@ -303,7 +309,7 @@ def _generate_code(scope, mixin_funcs={}, depth=0):
             except KeyError:
                 mixin = {}
             cl_code = _generate_code(cl, mixin, depth + 1)
-            code += parsing.indent_block(cl_code)
+            code += common.indent_block(cl_code)
         code += '\n'
 
     # functions
@@ -318,13 +324,23 @@ def _generate_code(scope, mixin_funcs={}, depth=0):
             # normal code generation
             code += 'def %s(%s):\n' % (name, params)
             code += doc_str
-            code += parsing.indent_block('%s\n\n' % ret)
+            code += common.indent_block('%s\n\n' % ret)
         else:
             # generation of code with mixins
             # the parser only supports basic functions with a newline after
             # the double dots
             # find doc_str place
-            pos = re.search(r'\):\s*\n', mixin).end()
+            try:
+                pos = re.search(r'\):\s*\n', mixin).end()
+            except TypeError:
+                # pypy uses a different reversed builtin
+                if name == 'reversed':
+                    mixin = 'def reversed(sequence):\n' \
+                            '    for i in self.__sequence: yield i'
+                    pos = 24
+                else:
+                    debug.warning('mixin trouble in pypy: %s', name)
+                    raise
             if pos is None:
                 raise Exception("Builtin function not parsed correctly")
             code += mixin[:pos] + doc_str + mixin[pos:]
@@ -336,7 +352,7 @@ def _generate_code(scope, mixin_funcs={}, depth=0):
             continue
         ret = 'pass'
         code += '@property\ndef %s(self):\n' % (name)
-        code += parsing.indent_block(get_doc(func) + '%s\n\n' % ret)
+        code += common.indent_block(get_doc(func) + '%s\n\n' % ret)
 
     # variables
     for name, value in stmts.items():

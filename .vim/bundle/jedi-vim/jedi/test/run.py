@@ -3,6 +3,7 @@ import os
 import sys
 import re
 import traceback
+import time
 from os.path import abspath, dirname
 
 sys.path.insert(0, abspath(dirname(abspath(__file__)) + '/../jedi'))
@@ -126,8 +127,8 @@ def run_test(source, f_name, lines_to_execute):
             try:
                 should_be |= defs(line_nr - 1, start + correct_start)
             except Exception:
-                raise Exception('could not resolve %s indent %s'
-                                                    % (line_nr - 1, start))
+                print('could not resolve %s indent %s' % (line_nr - 1, start))
+                raise
             if print_debug:
                 api.set_debug_function(debug.print_to_stdout)
         # because the objects have different ids, `repr` it, then compare it.
@@ -213,6 +214,8 @@ def test_dir(completion_test_dir, thirdparty=False):
             path = os.path.join(completion_test_dir, f_name)
             f = open(path)
             num_tests, fails = run_test(f.read(), f_name, lines_to_execute)
+            global test_sum
+            test_sum += num_tests
 
             s = 'run %s tests with %s fails (%s)' % (num_tests, fails, f_name)
             tests_fail += fails
@@ -220,6 +223,8 @@ def test_dir(completion_test_dir, thirdparty=False):
             summary.append(s)
 
 
+test_sum = 0
+t_start = time.time()
 # Sorry I didn't use argparse here. It's because argparse is not in the
 # stdlib in 2.5.
 args = sys.argv[1:]
@@ -263,12 +268,13 @@ if test_files or thirdparty:
     completion_test_dir += '/thirdparty'
     test_dir(completion_test_dir, thirdparty=True)
 
-print('\nSummary: (%s fails)' % tests_fail)
+print('\nSummary: (%s fails of %s tests) in %.3fs' % (tests_fail, test_sum,
+                                                    time.time() - t_start))
 for s in summary:
     print(s)
 
 exit_code = 1 if tests_fail else 0
-if sys.hexversion < 0x02060000 and tests_fail <= 5:
+if sys.hexversion < 0x02060000 and tests_fail <= 6:
     # Python 2.5 has major incompabillities (e.g. no property.setter),
     # therefore it is not possible to pass all tests.
     exit_code = 0

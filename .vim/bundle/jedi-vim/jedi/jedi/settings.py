@@ -14,6 +14,18 @@ add_dot_after_module = False
 # Removed it again, because in VIM that is not very practical.
 add_bracket_after_function = False
 
+# ----------------
+# parser
+# ----------------
+
+# Use the fast parser. This means that reparsing is only being done if
+# something has been changed e.g. to a function. If this happens, only the
+# function is being reparsed.
+fast_parser = True
+
+# This is just a debugging option. Always reparsing means that the fast parser
+# is basically useless. So don't use it.
+fast_parser_always_reparse = False
 
 # ----------------
 # dynamic stuff

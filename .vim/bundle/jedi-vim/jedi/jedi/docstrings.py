@@ -3,25 +3,26 @@
 import re
 
 import evaluate
+import parsing
 
 
-#@evaluate.memoize_default()  # TODO add
+#@cache.memoize_default()  # TODO add
 def follow_param(param):
     func = param.parent_function
     #print func, param, param.parent_function
     param_str = search_param_in_docstr(func.docstr, str(param.get_name()))
 
     if param_str is not None:
-        scope = func.get_parent_until()
-        return evaluate.get_scopes_for_name(scope, param_str,
-                                            search_global=True)
+        p = parsing.PyFuzzyParser(param_str, None, (1, 0), no_docstr=True)
+        p.user_stmt.parent = func
+        return evaluate.follow_statement(p.user_stmt)
     return []
 
 
 def search_param_in_docstr(docstr, param_str):
     lines = docstr.split('\n')
 
-    # look at #40 to see definitions of those params 
+    # look at #40 to see definitions of those params
     sphinx_comp = ':type %s:' % param_str
     googley_comp = re.compile('\s*%s\s+\(([^()]+)\)' % re.escape(param_str))
     for l in lines:
