@@ -40,3 +40,6 @@
 [submodule ".vim/bundle/vim-snipmate"]
 	path = .vim/bundle/vim-snipmate
 	url = https://github.com/garbas/vim-snipmate
+[submodule ".vim/bundle/acp"]
+	path = .vim/bundle/acp
+	url = https://github.com/vim-scripts/AutoComplPop
