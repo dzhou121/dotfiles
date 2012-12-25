@@ -107,6 +107,9 @@ let g:acp_completeoptPreview = 1
 " FuzzyFinder
 map <A-f> :FufFile **/<CR>
 map <A-c> :FufBuffer ;<CR>
+let g:fuf_file_exclude = '\.pyc$'
+
+" Taglist
 map <A-t> :TlistToggle<CR>
 let Tlist_Use_Right_Window = 0
 let Tlist_Auto_Highlight_Tag = 1
@@ -117,8 +120,15 @@ let Tlist_File_Fold_Auto_Close = 0
 let Tlist_WinWidth = 50
 "let Tlist_Auto_Open = 1
 "let Tlist_Show_One_File = 1
-let g:fuf_file_exclude = '\.pyc$'
 autocmd vimenter * TlistToggle
+
+" Tagbar
+" let g:tagbar_left = 1
+" let g:tagbar_width = 50
+" let g:tagbar_autoclose = 1
+" let g:tagbar_autofocus = 1
+" let g:tagbar_compact = 1
+" map <A-t> :TagbarToggle<CR>
 
 " Run pep8
 let g:pep8_map='<A-8>'
