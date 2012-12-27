@@ -158,11 +158,11 @@ set tags=./tags,tags,~/tags
 let g:jedi#show_function_definition = 1
 let g:jedi#use_tabs_not_buffers = 0
 let g:jedi#goto_command = "<C-n>"
+let g:jedi#popup_on_dot = 0
 "let ropevim_guess_project=1
 "let ropevim_vim_completion=1
 "let ropevim_enable_autoimport=1
 "nnoremap <C-n> :call RopeGotoDefinition()<CR>
-inoremap <buffer> . .<C-R>=jedi#do_popup_on_dot() ? "\<lt>C-X>\<lt>C-O>\<lt>C-P>" : ""<CR>
 
 " folding
 set foldmethod=indent
