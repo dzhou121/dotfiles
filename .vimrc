@@ -162,6 +162,7 @@ let g:jedi#goto_command = "<C-n>"
 "let ropevim_vim_completion=1
 "let ropevim_enable_autoimport=1
 "nnoremap <C-n> :call RopeGotoDefinition()<CR>
+inoremap <buffer> . .<C-R>=jedi#do_popup_on_dot() ? "\<lt>C-X>\<lt>C-O>\<lt>C-P>" : ""<CR>
 
 " folding
 set foldmethod=indent
