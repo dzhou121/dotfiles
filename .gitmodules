@@ -3,7 +3,7 @@
 	url = https://github.com/davidhalter/jedi-vim
 [submodule ".vim/bundle/pyflakes"]
 	path = .vim/bundle/pyflakes
-	url = https://github.com/kevinw/pyflakes-vim
+	url = https://github.com/vim-scripts/pyflakes.vim
 [submodule ".vim/bundle/fugitive"]
 	path = .vim/bundle/fugitive
 	url = https://github.com/tpope/vim-fugitive
