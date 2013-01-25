@@ -46,3 +46,6 @@
 [submodule ".vim/bundle/pyflakes"]
 	path = .vim/bundle/pyflakes
 	url = https://github.com/vim-scripts/pyflakes.vim
+[submodule ".vim/bundle/pig"]
+	path = .vim/bundle/pig
+	url = https://github.com/vim-scripts/pig.vim
