@@ -168,7 +168,7 @@ let g:jedi#popup_on_dot = 0
 set foldmethod=indent
 set foldtext=CustomFoldText()
 "set foldtext=''
-hi Folded term=NONE cterm=NONE gui=NONE guibg=NONE guisp=NONE ctermfg=NONE ctermbg=NONE
+hi Folded term=NONE cterm=NONE gui=NONE guifg=NONE guibg=NONE guisp=NONE ctermfg=NONE ctermbg=NONE
 nnoremap <space> za
 au BufWinLeave * silent! mkview
 au BufWinEnter * silent! loadview
@@ -184,14 +184,16 @@ fu! CustomFoldText()
          let line = substitute(getline(fs), '\t', repeat(' ', &tabstop), 'g')
      endif
  
-     let w = winwidth(0) - &foldcolumn - (&number ? 8 : 0)
-     let foldSize = 1 + v:foldend - v:foldstart
-     let foldSizeStr = " " . foldSize . " lines "
-     let foldLevelStr = repeat("+--", v:foldlevel)
-     let lineCount = line("$")
-     let foldPercentage = printf("[%.1f", (foldSize*1.0)/lineCount*100) . "%] "
-     let expansionString = repeat("-", w - strwidth(foldSizeStr.line.foldLevelStr.foldPercentage))
-     return line . expansionString . foldSizeStr . foldPercentage . foldLevelStr
+     "let w = winwidth(0) - &foldcolumn - (&number ? 8 : 0)
+     "let foldSize = 1 + v:foldend - v:foldstart
+     "let foldSizeStr = " " . foldSize . " lines "
+     "let foldLevelStr = repeat("+--", v:foldlevel)
+     "let lineCount = line("$")
+     "let foldPercentage = printf("[%.1f", (foldSize*1.0)/lineCount*100) . "%] "
+     "let expansionString = repeat("-", w - strwidth(foldSizeStr.line.foldLevelStr.foldPercentage))
+     let expansionString = repeat(" ", winwidth(0))
+     return line . " <-->" . expansionString
+     "return line . expansionString . foldSizeStr . foldPercentage . foldLevelStr
 endf
 
 " Add the virtualenv's site-packages to vim path
@@ -210,3 +212,6 @@ endif
 
 " git commands
 nnoremap <leader>gs :Gstatus<CR>
+
+" pig syntax
+au BufNewFile,BufRead *.pig set filetype=pig syntax=pig 
