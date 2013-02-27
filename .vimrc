@@ -106,7 +106,6 @@ let g:acp_completeoptPreview = 1
 
 " FuzzyFinder
 map <A-f> :FufFile **/<CR>
-map <A-c> :FufBuffer ;<CR>
 let g:fuf_file_exclude = '\.pyc$'
 
 " Taglist
@@ -130,10 +129,17 @@ autocmd vimenter * TlistToggle
 " let g:tagbar_compact = 1
 " map <A-t> :TagbarToggle<CR>
 
-" Run pep8
-autocmd FileType python map <buffer> <A-8> :call Flake8()<CR>
-
-let g:flake8_builtins="_,apply"
+" syntastic
+let g:syntastic_enable_signs = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_loc_list_height = 2
+let g:syntastic_auto_jump = 1
+let g:syntastic_error_symbol = '✗'
+let g:syntastic_warning_symbol = '⚠'
+let g:syntastic_python_checkers = ['flake8']
+hi SignColumn term=NONE cterm=NONE gui=NONE guifg=NONE guibg=NONE guisp=NONE ctermfg=NONE ctermbg=NONE
+map <A-e> :lne<CR>
+map <A-e> :lne<CR>
 
 set wrap
 autocmd BufNewFile,BufRead * setlocal formatoptions+=cqtl
