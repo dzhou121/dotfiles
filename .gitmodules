@@ -13,9 +13,6 @@
 [submodule ".vim/bundle/nerdtree"]
 	path = .vim/bundle/nerdtree
 	url = https://github.com/scrooloose/nerdtree
-[submodule ".vim/bundle/pep8"]
-	path = .vim/bundle/pep8
-	url = https://github.com/cburroughs/pep8.py
 [submodule ".vim/bundle/searchcomplete"]
 	path = .vim/bundle/searchcomplete
 	url = https://github.com/vim-scripts/SearchComplete
