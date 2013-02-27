@@ -49,3 +49,6 @@
 [submodule ".vim/bundle/pep8"]
 	path = .vim/bundle/pep8
 	url = https://github.com/vim-scripts/pep8
+[submodule ".vim/bundle/flake8"]
+	path = .vim/bundle/flake8
+	url = https://github.com/nvie/vim-flake8

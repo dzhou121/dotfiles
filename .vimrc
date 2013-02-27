@@ -131,7 +131,9 @@ autocmd vimenter * TlistToggle
 " map <A-t> :TagbarToggle<CR>
 
 " Run pep8
-let g:pep8_map='<A-8>'
+autocmd FileType python map <buffer> <A-8> :call Flake8()<CR>
+
+let g:flake8_builtins="_,apply"
 
 set wrap
 autocmd BufNewFile,BufRead * setlocal formatoptions+=cqtl
