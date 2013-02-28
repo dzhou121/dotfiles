@@ -92,7 +92,6 @@ nnoremap <leader><space> :nohlsearch<cr>
 nnoremap <leader>S :%s/\s\+$//<cr>:let @/=''<CR>
 
 " Templates to HTML
-autocmd BufNewFile,BufRead *.mako,*.mak,*.jinja2 setlocal ft=html
 autocmd FileType html,xhtml,xml,css,yml setlocal expandtab shiftwidth=2 tabstop=2
 
 map <A-n> :NERDTreeToggle<CR>
