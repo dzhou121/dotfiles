@@ -57,4 +57,4 @@
 	url = https://github.com/scrooloose/syntastic
 [submodule ".vim/bundle/jinja"]
 	path = .vim/bundle/jinja
-	url = https://github.com/lepture/vim-jinja
+	url = https://github.com/lanticezdd/vim-jinja
