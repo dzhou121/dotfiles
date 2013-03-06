@@ -79,7 +79,7 @@ colorscheme solarized
 call togglebg#map("<F5>")
 
 " Paste from clipboard
-nnoremap <A-p> "+p
+map <A-p> "+p
 " copy to clipboard
 map <A-y> "+yy
 nnoremap <A-q> :q<CR>
