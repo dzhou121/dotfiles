@@ -79,7 +79,7 @@ colorscheme solarized
 call togglebg#map("<F5>")
 
 " Paste from clipboard
-map <A-p> "+p
+nnoremap <A-p> "+p
 " copy to clipboard
 map <A-y> "+yy
 nnoremap <A-q> :q<CR>
@@ -222,3 +222,5 @@ nnoremap <leader>gs :Gstatus<CR>
 
 " pig syntax
 au BufNewFile,BufRead *.pig set filetype=pig syntax=pig 
+
+let g:AutoPairsShortcutToggle = ""
