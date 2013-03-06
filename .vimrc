@@ -222,5 +222,3 @@ nnoremap <leader>gs :Gstatus<CR>
 
 " pig syntax
 au BufNewFile,BufRead *.pig set filetype=pig syntax=pig 
-
-let g:AutoPairsShortcutToggle = ""
