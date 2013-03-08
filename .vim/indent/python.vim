@@ -170,7 +170,7 @@ function! GetPythonIndent(lnum)
         if maybe_indent != -1
             return maybe_indent
         else
-            return indent(sslnum) + &sw * 2
+            return indent(sslnum) + &sw
         endif
     endif
     
