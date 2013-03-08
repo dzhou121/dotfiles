@@ -97,6 +97,7 @@ autocmd FileType html,xhtml,xml,css,yml setlocal expandtab shiftwidth=2 tabstop=
 map <A-n> :NERDTreeToggle<CR>
 " autocmd vimenter * NERDTree
 " autocmd vimenter * if !argc() | NERDTree | endif
+let NERDTreeIgnore = ['\.pyc$']
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 
 
