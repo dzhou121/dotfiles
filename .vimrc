@@ -92,7 +92,7 @@ nnoremap <leader><space> :nohlsearch<cr>
 nnoremap <leader>S :%s/\s\+$//<cr>:let @/=''<CR>
 
 " Templates to HTML
-autocmd FileType html,xhtml,xml,css,yml setlocal expandtab shiftwidth=2 tabstop=2
+autocmd BufNewFile,BufRead *.html,*.xhtml,*.xml,*.css,*.yml,*.jinja setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
 
 map <A-n> :NERDTreeToggle<CR>
 " autocmd vimenter * NERDTree
