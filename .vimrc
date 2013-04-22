@@ -57,7 +57,7 @@ set report=0
 " displays tabs with :set list & displays when a line runs off-screen
 set listchars=tab:>-,eol:¬,trail:-,precedes:<,extends:>
 
-set guifont=Inconsolata\ 11
+set guifont=Inconsolata\ 10
 set linespace=2
 
 if has("gui_running")
