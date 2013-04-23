@@ -223,3 +223,9 @@ nnoremap <leader>gs :Gstatus<CR>
 
 " pig syntax
 au BufNewFile,BufRead *.pig set filetype=pig syntax=pig 
+
+" remove split bar
+set fillchars=vert:│
+hi VertSplit cterm=reverse ctermbg=NONE guifg=#586e75 guibg=NONE
+hi LineNr guifg=#586e75 guibg=NONE
+hi CursorLineNr guifg=#586e75 guibg=#073642
