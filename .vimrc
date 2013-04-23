@@ -117,6 +117,7 @@ let Tlist_GainFocus_On_ToggleOpen = 0
 let Tlist_Use_Horiz_Window = 0
 let Tlist_File_Fold_Auto_Close = 0
 let Tlist_WinWidth = 50
+let Tlist_Enable_Fold_Column = 0
 "let Tlist_Auto_Open = 1
 "let Tlist_Show_One_File = 1
 autocmd vimenter * TlistToggle
