@@ -52,9 +52,6 @@
 [submodule ".vim/bundle/jinja"]
 	path = .vim/bundle/jinja
 	url = https://github.com/lanticezdd/vim-jinja
-[submodule ".vim/bundle/YouCompleteMe"]
-	path = .vim/bundle/YouCompleteMe
-	url = https://github.com/Valloric/YouCompleteMe
 [submodule ".vim/bundle/jedi-vim"]
 	path = .vim/bundle/jedi-vim
 	url = https://github.com/davidhalter/jedi-vim
