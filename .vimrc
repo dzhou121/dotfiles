@@ -132,14 +132,15 @@ autocmd vimenter * TlistToggle
 
 " syntastic
 let g:syntastic_enable_signs = 1
-let g:syntastic_auto_loc_list = 1
+let g:syntastic_auto_loc_list = 0
 let g:syntastic_loc_list_height = 2
 let g:syntastic_auto_jump = 0
 let g:syntastic_error_symbol = '✗'
 let g:syntastic_warning_symbol = '⚠'
 let g:syntastic_python_checkers = ['flake8']
 hi SignColumn term=NONE cterm=NONE gui=NONE guifg=NONE guibg=NONE guisp=NONE ctermfg=NONE ctermbg=NONE
-map <A-e> :lne<CR>
+" autocmd CursorHoldI *.py call Flake8()
+set updatetime=1000
 map <A-e> :lne<CR>
 
 set wrap
