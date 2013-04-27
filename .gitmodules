@@ -43,6 +43,3 @@
 [submodule ".vim/bundle/jedi-vim"]
 	path = .vim/bundle/jedi-vim
 	url = https://github.com/davidhalter/jedi-vim
-[submodule ".vim/bundle/khuno"]
-	path = .vim/bundle/khuno
-	url = https://github.com/alfredodeza/khuno.vim
