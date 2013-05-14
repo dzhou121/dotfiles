@@ -46,3 +46,6 @@
 [submodule ".vim/bundle/khuno"]
 	path = .vim/bundle/khuno
 	url = https://github.com/lanticezdd/khuno.vim
+[submodule ".vim/bundle/ack"]
+	path = .vim/bundle/ack
+	url = https://github.com/mileszs/ack.vim
