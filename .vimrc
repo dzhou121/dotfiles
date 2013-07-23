@@ -99,13 +99,12 @@ map <A-n> :NERDTreeToggle<CR>
 let NERDTreeIgnore = ['\.pyc$']
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 
-
-let g:acp_behaviorPythonOmniLength = -1 
-let g:acp_completeoptPreview = 1
-
-" FuzzyFinder
-map <A-f> :FufFile **/<CR>
-let g:fuf_file_exclude = '\.pyc$'
+" neocomplcache
+let g:neocomplcache_enable_at_startup = 1
+let g:neocomplcache_enable_auto_select = 1
+let g:neocomplcache_enable_quick_match = 1
+let g:neocomplcache_enable_camel_case_completion = 1
+let g:neocomplcache_enable_underbar_completion = 1
 
 " Taglist
 map <A-t> :TlistToggle<CR>
@@ -160,8 +159,6 @@ nnoremap <A-k> <C-w>k
 
 " set tags path
 set tags=./tags,tags,~/tags
-
-" au FocusLost * :wa
 
 " jedi-vim 
 let g:jedi#show_function_definition = 1
