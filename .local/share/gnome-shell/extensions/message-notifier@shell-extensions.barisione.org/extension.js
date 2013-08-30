@@ -16,14 +16,17 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+const BoxPointer = imports.ui.boxpointer;
 const ExtensionUtils = imports.misc.extensionUtils;
 const GLib = imports.gi.GLib;
 const Lang = imports.lang;
 const Main = imports.ui.main;
-const Meta = imports.gi.Meta;
+const Mainloop = imports.mainloop;
 const MessageTray = imports.ui.messageTray;
+const Meta = imports.gi.Meta;
 const PanelMenu = imports.ui.panelMenu;
 const PopupMenu = imports.ui.popupMenu;
+const Shell = imports.gi.Shell;
 const St = imports.gi.St;
 
 const Me = ExtensionUtils.getCurrentExtension();
@@ -59,8 +62,9 @@ const Indicator = new Lang.Class({
 
         debug("using keybinding '" + settings.get_strv(openMenuSettingId)[0] +
             "' to show the menu");
-        global.display.add_keybinding(openMenuSettingId, settings,
+        Main.wm.addKeybinding(openMenuSettingId, settings,
                 Meta.KeyBindingFlags.NONE,
+                Shell.KeyBindingMode.NORMAL | Shell.KeyBindingMode.OVERVIEW,
                 Lang.bind(this, function () {
                     if (this.menu.firstMenuItem) {
                         debug("menu activated through a keybinding");
@@ -80,29 +84,42 @@ const Indicator = new Lang.Class({
         this.parent();
     },
 
-    _addItem: function(title, count, openFunction) {
+    _addElement: function(title, count, openFunction) {
         this._count += 1;
 
         if (count > 0)
             title += " (" + count.toString() + ")";
 
         let menuItem = new PopupMenu.PopupMenuItem(title);
-        menuItem.connect('activate', openFunction);
+        menuItem.connect('activate', Lang.bind(this, function() {
+            this.menu.close(BoxPointer.PopupAnimation.NONE);
+            openFunction();
+            Mainloop.timeout_add_seconds (1, Lang.bind(this, function() {
+                /* Opening the item triggers a call to updateCount()
+                 * automatically, but sometimes it doesn't work so the count
+                 * remains unchanged. It's probably a gnome-shell bug, but I
+                 * cannot figure out what happens exactly.
+                 * We force an updateCount() after a timeout as this works
+                 * around the bug (and has no side effect). */
+                this.updateCount();
+                return false;
+            }));
+        }));
         this.menu.addMenuItem(menuItem);
 
-        debug("added item '" + title + "'");
+        debug("added element '" + title + "'");
     },
 
-    _addItemWithSource: function(title, count, source) {
-        this._addItem(title, count, Lang.bind(source, source.open));
+    _addElementFromItem: function(title, count, item) {
+        this._addElement(title, count, Lang.bind(item, item.open));
     },
 
-    _handleGeneric: function(item, sourceCount) {
+    _handleGeneric: function(item, itemCount) {
         // Easiest case: every notification item represents a single chat.
-        this._addItemWithSource(item.source.title, sourceCount, item.source);
+        this._addElementFromItem(item.title, itemCount, item);
     },
 
-    _handleGenericWithNotifications: function(item, sourceCount, showCount, messageFilter) {
+    _handleGenericWithNotifications: function(item, itemCount, showCount, messageFilter) {
         // A single notification icon represents more conversations. We try
         // to split them based on the title.
         // If showCount is true it means that the application generates a
@@ -112,12 +129,12 @@ const Indicator = new Lang.Class({
         // a notification for the first message, so we cannot rely on
         // counting the notifications.
 
-        if (!item.source.notifications)
+        if (!item.notifications)
             return;
 
         let countMap = {}
-        for (let i = 0; i < item.source.notifications.length; i++) {
-            let title = item.source.notifications[i].title;
+        for (let i = 0; i < item.notifications.length; i++) {
+            let title = item.notifications[i].title;
             if (messageFilter)
                 title = messageFilter(title);
 
@@ -129,14 +146,14 @@ const Indicator = new Lang.Class({
         }
 
         for (let title in countMap)
-            this._addItemWithSource(title, showCount ? countMap[title] : -1, item.source);
+            this._addElementFromItem(title, showCount ? countMap[title] : -1, item);
     },
 
     _startHandlingNotifySend: function() {
         this._pendingNotifySend = {}
     },
 
-    _handleNotifySend: function(item, sourceCount) {
+    _handleNotifySend: function(item, itemCount) {
         // notify-send is invoked once per new message, so we need to go
         // through all the notifications icons, group them and then add
         // the items.
@@ -146,21 +163,21 @@ const Indicator = new Lang.Class({
         // the notifications with the same title together we try to improve
         // things as a single click can get rid of multiple notifications.
 
-        if (!item.source.notifications)
+        if (!item.notifications)
             return;
 
         // I really don't think there can be multiple ones, but...
-        for (let i = 0; i < item.source.notifications.length; i++) {
-            let title = item.source.notifications[i].title;
+        for (let i = 0; i < item.notifications.length; i++) {
+            let title = item.notifications[i].title;
             let existing = this._pendingNotifySend[title];
             if (existing == undefined) {
                 existing = new Array();
                 debug("delaying addition of item '" + title + "'");
             }
             else {
-                debug("updating the sources for delayed item '" + title + "'");
+                debug("updating the item list for delayed element '" + title + "'");
             }
-            existing.push(item.source);
+            existing.push(item);
             this._pendingNotifySend[title] = existing;
         }
     },
@@ -174,7 +191,7 @@ const Indicator = new Lang.Class({
 
         for (let title in this._pendingNotifySend) {
             let notifications = this._pendingNotifySend[title];
-            this._addItem(title, notifications.length, function() {
+            this._addElement(title, notifications.length, function() {
                 // We call open on all of the notifications, but I don't think it
                 // can do anything in the notify-send case (except for dismissing
                 // the notification).
@@ -186,14 +203,14 @@ const Indicator = new Lang.Class({
         this._pendingNotifySend = undefined;
     },
 
-    _handleXChat: function(item, sourceCount) {
+    _handleXChat: function(item, itemCount) {
         // Both XChat and XChat-GNOME use notifications in the same way.
         // Notice that XChat falls back to notify-send if it cannot use libnotify.
-        this._handleGenericWithNotifications(item, sourceCount, true);
+        this._handleGenericWithNotifications(item, itemCount, true);
     },
 
-    _handlePidgin: function(item, sourceCount) {
-        this._handleGenericWithNotifications(item, sourceCount, false,
+    _handlePidgin: function(item, itemCount) {
+        this._handleGenericWithNotifications(item, itemCount, false,
                 function(message) {
                     // The title of pidgin-libnotify's notifications is
                     // "%s says:", but having that in the menu would be ugly.
@@ -219,59 +236,61 @@ const Indicator = new Lang.Class({
         this._startHandlingNotifySend();
         this.menu.removeAll();
 
-        let items = Main.messageTray._summaryItems;
+        let items = Main.messageTray.getSources();
 
         for (let i = 0; i < items.length; i++) {
             let item = items[i];
-            let source = item.source;
 
-            // make sure we have source._mainIcon
-            source._ensureMainIcon();
-            let sourceCount = parseInt(source._mainIcon._counterLabel.get_text(), 10);
+            // make sure we have item._mainIcon
+            item._ensureMainIcon();
+            let itemCount = parseInt(item._mainIcon._counterLabel.get_text(), 10);
 
-            if (source.notifications && source.notifications.length > 0) {
-                debug("processing item '" + source.title + "' with " +
-                      source.notifications.length + " notifications:");
-                for (let i = 0; i < source.notifications.length; i++)
-                    debug ("    " + source.notifications[i].title);
+            if (item.notifications && item.notifications.length > 0) {
+                debug("processing item '" + item.title + "' with " +
+                      item.notifications.length + " notifications:");
+                for (let i = 0; i < item.notifications.length; i++)
+                    debug ("    " + item.notifications[i].title);
             }
             else {
-                debug("processing item '" + source.title + "' with " +
+                debug("processing item '" + item.title + "' with " +
                       "no notifications");
             }
 
-            if (!isNaN(sourceCount) && sourceCount > 0) {
+            if (!isNaN(itemCount) && itemCount > 0) {
                 let key = null;
-                if (source.isChat)
+                if (item.isChat)
                     key = 'telepathy';
-                else if (source.title == 'notify-send')
+                else if (item.title == 'notify-send')
                     key = 'notify-send'
-                else if (source.app)
-                    key = source.app.get_id();
+                else if (item.app)
+                    key = item.app.get_id();
 
                 if (key != null) {
                     let app_cb = app_map[key];
                     if (app_cb != null) {
                         debug ("processing with handler for key '" + key +
-                               "', the source count is " + sourceCount);
-                        app_cb.call(this, item, sourceCount);
+                               "', the item count is " + itemCount);
+                        app_cb.call(this, item, itemCount);
                     }
                     else {
                         debug ("ignoring as there is no associated handler " +
                                "for key '" + key + "':");
-                        debug ("    source title: '" + source.title + "'");
-                        if (source.app) {
-                            debug ("    app ID: '" + source.app.get_id() + "'");
-                            debug ("    app name: '" + source.app.get_name() + "'");
+                        debug ("    title: '" + item.title + "'");
+                        if (item.app) {
+                            debug ("    app ID: '" + item.app.get_id() + "'");
+                            debug ("    app name: '" + item.app.get_name() + "'");
                         }
                         else {
                             debug ("    app: null");
                         }
                     }
                 }
+                else {
+                    debug("ignoring item with null key");
+                }
             }
             else {
-                debug ("ignoring as the count is " + sourceCount);
+                debug("ignoring item as its count is " + itemCount);
             }
         }
 
