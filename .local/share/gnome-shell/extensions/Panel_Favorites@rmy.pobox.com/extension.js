@@ -1,4 +1,4 @@
-// Copyright (C) 2011-2012 R M Yorston
+// Copyright (C) 2011-2013 R M Yorston
 // Licence: GPLv2+
 
 const Clutter = imports.gi.Clutter;
@@ -12,7 +12,6 @@ const Mainloop = imports.mainloop;
 const AppFavorites = imports.ui.appFavorites;
 const Main = imports.ui.main;
 const Panel = imports.ui.panel;
-const SessionMode = imports.ui.sessionMode;
 const Tweener = imports.ui.tweener;
 
 const PANEL_LAUNCHER_LABEL_SHOW_TIME = 0.15;
@@ -208,51 +207,44 @@ const PanelFavorites = new Lang.Class({
 });
 Signals.addSignalMethods(PanelFavorites.prototype);
 
+let myAddToStatusArea;
+let panelFavorites;
+
 function enable() {
-    Panel.PANEL_ITEM_IMPLEMENTATIONS['panelFavorites'] = PanelFavorites;
+    Panel.Panel.prototype.myAddToStatusArea = myAddToStatusArea;
 
-    let panel = SessionMode._modes['user'].panel;
-    let act_index, app_index, fav_index;
+    // place panel to left of app menu, or failing that at right end of box
+    let siblings = Main.panel._leftBox.get_children();
+    let appMenu = Main.panel.statusArea['appMenu'];
+    let pos = appMenu ? siblings.indexOf(appMenu.container) : siblings.length;
 
-    act_index = panel.left.indexOf('activities');
-    app_index = panel.left.indexOf('appMenu');
-    fav_index = panel.left.indexOf('panelFavorites');
-    if ( act_index > -1 && fav_index == -1 ) {
-        // add favorites to right of activities
-        panel.left.splice(act_index+1, 0, 'panelFavorites');
-        Main.panel._updatePanel();
-    }
-    else if ( app_index >= 1 && fav_index == -1 ) {
-        // add favorites to left of app menu
-        panel.left.splice(app_index, 0, 'panelFavorites');
-        Main.panel._updatePanel();
-    }
-    else if ( fav_index == -1 ) {
-        // add favorites to right end of left panel
-        panel.left.push('panelFavorites');
-        Main.panel._updatePanel();
-    }
+    panelFavorites = new PanelFavorites();
+    Main.panel.myAddToStatusArea('panel-favorites', panelFavorites,
+                                pos, 'left');
 }
 
 function disable() {
-    delete Panel.PANEL_ITEM_IMPLEMENTATIONS['panelFavorites'];
+    delete Panel.Panel.prototype.myAddToStatusArea;
 
-    let panel = SessionMode._modes['user'].panel;
-    let index = panel.left.indexOf('panelFavorites');
-    let indicator = Main.panel.statusArea['panelFavorites'];
-
-    if ( index > -1 ) {
-        panel.left.splice(index, 1);
-
-        if ( indicator != null ) {
-            Main.panel._leftBox.remove_actor(indicator.container);
-            indicator.container.destroy();
-            delete Main.panel.statusArea['panelFavorites'];
-        }
-
-        Main.panel._updatePanel();
-    }
+    panelFavorites.actor.destroy();
+    panelFavorites.emit('destroy');
+    panelFavorites = null;
 }
 
 function init() {
+    myAddToStatusArea = function(role, indicator, position, box) {
+        if (this.statusArea[role])
+            throw new Error('Extension point conflict: there is already a status indicator for role ' + role);
+
+        position = position || 0;
+        let boxes = {
+            left: this._leftBox,
+            center: this._centerBox,
+            right: this._rightBox
+        };
+        let boxContainer = boxes[box] || this._rightBox;
+        this.statusArea[role] = indicator;
+        this._addToPanelBox(role, indicator, position, boxContainer);
+        return indicator;
+    };
 }
