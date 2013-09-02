@@ -4,9 +4,9 @@
   "name": "Message Notifier", 
   "settings-schema": "org.barisione.shell-extensions.message-notifier", 
   "shell-version": [
-    "3.6"
+    "3.8"
   ], 
   "url": "http://cgit.collabora.com/git/user/bari/shell-message-notifier.git/", 
   "uuid": "message-notifier@shell-extensions.barisione.org", 
-  "version": 15
+  "version": 17
 }
