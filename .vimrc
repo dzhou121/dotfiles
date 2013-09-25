@@ -105,6 +105,7 @@ let g:neocomplcache_enable_auto_select = 1
 let g:neocomplcache_enable_quick_match = 1
 let g:neocomplcache_enable_camel_case_completion = 1
 let g:neocomplcache_enable_underbar_completion = 1
+inoremap <expr><space>  pumvisible() ? neocomplcache#close_popup() . "\<SPACE>" : "\<SPACE>"
 
 " Taglist
 map <A-t> :TlistToggle<CR>
@@ -161,11 +162,12 @@ nnoremap <A-k> <C-w>k
 set tags=./tags,tags,~/tags
 
 " jedi-vim 
-let g:jedi#show_function_definition = 1
+let g:jedi#show_call_signatures = 0
 let g:jedi#use_tabs_not_buffers = 0
-let g:jedi#goto_command = "<C-n>"
+let g:jedi#goto_assignments_command = "<C-n>"
 let g:jedi#popup_on_dot = 1
 let g:jedi#popup_select_first = 0
+"autocmd FileType python setlocal completeopt-=preview
 
 " folding
 set foldmethod=indent
