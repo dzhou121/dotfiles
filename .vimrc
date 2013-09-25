@@ -35,7 +35,7 @@ set softtabstop=4
 set expandtab
 set ttyfast
 set laststatus=2            " Always show statusline, even if only 1 window.
-set statusline=[%l,%v\ %P%M]\ %f\ %r%h%w\ (%{&ff})\ %{fugitive#statusline()}
+"set statusline=[%l,%v\ %P%M]\ %f\ %r%h%w\ (%{&ff})\ %{fugitive#statusline()}
 
 nnoremap / /\V
 vnoremap / /\V
@@ -99,14 +99,6 @@ map <A-n> :NERDTreeToggle<CR>
 let NERDTreeIgnore = ['\.pyc$']
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 
-" neocomplcache
-let g:neocomplcache_enable_at_startup = 1
-let g:neocomplcache_enable_auto_select = 1
-let g:neocomplcache_enable_quick_match = 1
-let g:neocomplcache_enable_camel_case_completion = 1
-let g:neocomplcache_enable_underbar_completion = 1
-inoremap <expr><space>  pumvisible() ? neocomplcache#close_popup() . "\<SPACE>" : "\<SPACE>"
-
 " Taglist
 map <A-t> :TlistToggle<CR>
 let Tlist_Use_Right_Window = 0
@@ -161,11 +153,22 @@ nnoremap <A-k> <C-w>k
 " set tags path
 set tags=./tags,tags,~/tags
 
+" neocomplcache
+let g:neocomplcache_enable_at_startup = 1
+let g:neocomplcache_enable_auto_select = 1
+let g:neocomplcache_enable_quick_match = 1
+let g:neocomplcache_enable_camel_case_completion = 1
+let g:neocomplcache_enable_underbar_completion = 1
+if !exists('g:neocomplcache_force_omni_patterns')
+  let g:neocomplcache_force_omni_patterns = {}
+endif
+let g:neocomplcache_force_omni_patterns.python = '[^. \t]\.\w*'
+
 " jedi-vim 
-let g:jedi#show_call_signatures = 0
+let g:jedi#show_call_signatures = 1
 let g:jedi#use_tabs_not_buffers = 0
 let g:jedi#goto_assignments_command = "<C-n>"
-let g:jedi#popup_on_dot = 1
+let g:jedi#popup_on_dot = 0
 let g:jedi#popup_select_first = 0
 "autocmd FileType python setlocal completeopt-=preview
 
@@ -228,3 +231,9 @@ set fillchars=vert:│
 hi VertSplit cterm=reverse ctermbg=NONE guifg=#586e75 guibg=NONE
 hi LineNr guifg=#586e75 guibg=NONE
 hi CursorLineNr guifg=#586e75 guibg=#073642
+
+"let g:powerline_config_overrides = {"ext": {"vim": {"colorscheme": "solarized", "theme": "default"}}, "common": { "ambiwidth": 2}}
+set rtp+=~/.vim/bundle/powerline/powerline/bindings/vim/
+
+" khuno
+let g:khuno_ignore="E712,E711"
