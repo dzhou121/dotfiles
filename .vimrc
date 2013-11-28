@@ -237,3 +237,6 @@ set rtp+=~/.vim/bundle/powerline/powerline/bindings/vim/
 
 " khuno
 let g:khuno_ignore="E712,E711"
+
+" easymotion
+let g:EasyMotion_leader_key = '<Leader>'
