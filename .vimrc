@@ -94,9 +94,9 @@ nnoremap <leader>S :%s/\s\+$//<cr>:let @/=''<CR>
 autocmd BufNewFile,BufRead *.html,*.xhtml,*.xml,*.css,*.yml,*.jinja setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
 
 map <A-n> :NERDTreeToggle<CR>
-" autocmd vimenter * NERDTree
-" autocmd vimenter * if !argc() | NERDTree | endif
+autocmd vimenter * NERDTree | wincmd l
 let NERDTreeIgnore = ['\.pyc$']
+let NERDTreeWinSize = 50 
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 
 " Taglist
@@ -111,7 +111,7 @@ let Tlist_WinWidth = 50
 let Tlist_Enable_Fold_Column = 0
 "let Tlist_Auto_Open = 1
 "let Tlist_Show_One_File = 1
-autocmd vimenter * TlistToggle
+"autocmd vimenter * TlistToggle
 
 " Tagbar
 " let g:tagbar_left = 1
