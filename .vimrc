@@ -57,7 +57,7 @@ set report=0
 " displays tabs with :set list & displays when a line runs off-screen
 set listchars=tab:>-,eol:¬,trail:-,precedes:<,extends:>
 
-set guifont=Inconsolata\ 10
+set guifont=Inconsolata\ for\ Powerline\ 10
 set linespace=2
 
 if has("gui_running")
@@ -240,3 +240,6 @@ let g:khuno_ignore="E712,E711"
 
 " easymotion
 let g:EasyMotion_leader_key = '<Leader>'
+
+" CtrlP
+let g:ctrlp_custom_ignore = {'file': '\v\.pyc$'}

@@ -1,7 +1,72 @@
-3.8.2
+3.10.0
+======
+* updated translations (as, cs, da, es, et, fi, fr, gl,
+  he, id, it, kk, lt, lv, pa, pl, pt, pt_BR, ru, sl, tg,
+  uk, zh_HK, zh_TW)
+
+3.9.92
+======
+* more updates and fixes for gnome-shell master changes
+  and regressions (systemMonitor, window-list, apps-menu)
+* lots of updated translations (ar, as, cs, da, de, el, es,
+  eu, fi, gl, he, hu, it, ja, kk, ko, lv, nb, nl, pa, pl,
+  pt_BR, ru, sk, sr, sr@latin, ta, tg)
+
+3.9.91
+======
+* update the classic mode session and theme to work with the
+  new system menu
+* the usual round of updates and fixes for gnome-shell
+  API changes
+* updated translations (de, it, lt, nl, pl, pt_BR, sk,
+  zh_HK, zh_TW)
+
+3.9.90
+======
+* xrandr-indicator was removed, as the implementation
+  was incompatible with the new DisplayConfig mutter API
+* various extensions were updated for the 3.9.90 gnome-shell API
+* updated translations (cs, es, fur, gl, he, hu, id, ja, sl, tg,
+  zh_CN, zh_HK, zh_TW)
+
+3.9.5
 =====
-* window-list: fix styling in classic mode
-* window-list: code cleanups
+* alternative-status-menu was removed entirely, as
+  it does not fit in the designs of the new unified
+  status menu
+* updated translations (as, gu, it, ru)
+
+3.9.4
+=====
+* apps-menu: fixed handling of hot corner in case
+  of screen reconfiguration
+* alternative-status-menu now correctly honors polkit
+  for hibernation
+* user-menu now loads themes from $XDG_DATA_HOME too
+* translation updates (de, id, pt_BR, vi, zh_CN, ml)
+
+3.9.3
+=====
+* classic mode mini extensions were replaced with a
+  GSettings override specified in the .json file
+* styling of classic mode improved
+* native-window-placement is back working on 3.9
+* misc bug fixes
+* traslation updates (an, cs, el, es, gl, nb, pl, sk, tg)
+
+3.9.2
+=====
+* apps-menu: appearance of the scrollbars was improved
+* window-list is a little taller in classic mode (to account
+  for the workspace switcher)
+* alternative-status-menu honors again the dconf configuration
+* translation updates (sr)
+
+3.9.1
+=====
+* updates to window-list, xrandr-indicator,
+  workspace-indicator, windowsNavigator for gnome-shell
+  changes
 * translation updates (cs, es, lt, pl, pt_BR, sl)
 
 3.8.1
