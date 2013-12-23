@@ -131,7 +131,7 @@ let g:syntastic_warning_symbol = '⚠'
 let g:syntastic_python_checkers = ['flake8']
 hi SignColumn term=NONE cterm=NONE gui=NONE guifg=NONE guibg=NONE guisp=NONE ctermfg=NONE ctermbg=NONE
 " autocmd CursorHoldI *.py call Flake8()
-set updatetime=1000
+set updatetime=500
 map <A-e> :lne<CR>
 
 set wrap
