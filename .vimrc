@@ -94,32 +94,40 @@ nnoremap <leader>S :%s/\s\+$//<cr>:let @/=''<CR>
 autocmd BufNewFile,BufRead *.html,*.xhtml,*.xml,*.css,*.yml,*.jinja setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
 
 map <A-n> :NERDTreeToggle<CR>
-autocmd vimenter * NERDTree | wincmd l
+"autocmd vimenter * NERDTree | wincmd l
 let NERDTreeIgnore = ['\.pyc$']
 let NERDTreeWinSize = 50 
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 
 " Taglist
-map <A-t> :TlistToggle<CR>
-let Tlist_Use_Right_Window = 0
-let Tlist_Auto_Highlight_Tag = 1
-let Tlist_Exit_OnlyWindow = 1
-let Tlist_GainFocus_On_ToggleOpen = 0
-let Tlist_Use_Horiz_Window = 0
-let Tlist_File_Fold_Auto_Close = 0
-let Tlist_WinWidth = 50
-let Tlist_Enable_Fold_Column = 0
+" map <A-t> :TlistToggle<CR>
+" let Tlist_Use_Right_Window = 0
+" let Tlist_Auto_Highlight_Tag = 1
+" let Tlist_Exit_OnlyWindow = 1
+" let Tlist_GainFocus_On_ToggleOpen = 0
+" let Tlist_Use_Horiz_Window = 0
+" let Tlist_File_Fold_Auto_Close = 0
+" let Tlist_WinWidth = 50
+" let Tlist_Enable_Fold_Column = 0
 "let Tlist_Auto_Open = 1
 "let Tlist_Show_One_File = 1
 "autocmd vimenter * TlistToggle
 
 " Tagbar
-" let g:tagbar_left = 1
-" let g:tagbar_width = 50
-" let g:tagbar_autoclose = 1
-" let g:tagbar_autofocus = 1
-" let g:tagbar_compact = 1
-" map <A-t> :TagbarToggle<CR>
+hi link TagbarType Statement
+hi link TagbarScope Function
+let g:tagbar_left = 1
+let g:tagbar_width = 50
+let g:tagbar_autoclose = 1
+let g:tagbar_autofocus = 1
+let g:tagbar_show_linenumbers = 2
+let g:tagbar_compact = 0
+let g:tagbar_expand = 0
+let g:tagbar_indent = 4
+let g:tagbar_iconchars = ['▸', '▾']
+let g:tagbar_sort = 0
+map <A-t> :TagbarToggle<CR>
+autocmd vimenter * TagbarOpen | wincmd l
 
 " syntastic
 let g:syntastic_enable_signs = 1
