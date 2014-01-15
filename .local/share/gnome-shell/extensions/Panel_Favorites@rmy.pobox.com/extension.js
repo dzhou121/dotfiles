@@ -24,7 +24,8 @@ const PanelLauncher = new Lang.Class({
     _init: function(app) {
         this.actor = new St.Button({ style_class: 'panel-button',
                                      reactive: true });
-        let icon = app.create_icon_texture(24);
+        this.iconSize = 24;
+        let icon = app.create_icon_texture(this.iconSize);
         this.actor.set_child(icon);
         this.actor._delegate = this;
         let text = app.get_name();
@@ -45,10 +46,22 @@ const PanelLauncher = new Lang.Class({
         this.actor.connect('notify::hover',
                 Lang.bind(this, this._onHoverChanged));
         this.actor.opacity = 207;
+
+        this.actor.connect('notify::allocation', Lang.bind(this, this._alloc));
     },
 
     _onHoverChanged: function(actor) {
         actor.opacity = actor.hover ? 255 : 207;
+    },
+
+    _alloc: function() {
+        let size = this.actor.allocation.y2 - this.actor.allocation.y1 - 3;
+        if ( size >= 24 && size != this.iconSize ) {
+            this.actor.get_child().destroy();
+            this.iconSize = size;
+            let icon = this._app.create_icon_texture(this.iconSize);
+            this.actor.set_child(icon);
+        }
     },
 
     showLabel: function() {
@@ -116,6 +129,7 @@ const PanelFavorites = new Lang.Class({
         this._labelShowing = false;
 
         this.actor = new St.BoxLayout({ name: 'panelFavorites',
+                                        x_expand: true, y_expand: true,
                                         style_class: 'panel-favorites' });
         this._display();
 
