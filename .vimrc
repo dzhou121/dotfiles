@@ -57,9 +57,6 @@ set report=0
 " displays tabs with :set list & displays when a line runs off-screen
 set listchars=tab:>-,eol:¬,trail:-,precedes:<,extends:>
 
-set guifont=Inconsolata\ for\ Powerline\ 10
-set linespace=2
-
 if has("gui_running")
     set guioptions-=m
     set guioptions-=T
@@ -70,8 +67,12 @@ if has("gui_running")
     set lines=999 columns=999
 endif
 
+set guifont=Inconsolata\ for\ Powerline\ 10
+set linespace=2
+
 if has("gui_macvim")
     set macmeta
+    set guifont=Inconsolata\ for\ Powerline\:h12
 endif
 
 set background=dark
