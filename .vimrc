@@ -72,7 +72,7 @@ set linespace=2
 
 if has("gui_macvim")
     set macmeta
-    set guifont=Inconsolata\ for\ Powerline\:h12
+    set guifont=Inconsolata\ for\ Powerline\:h14
 endif
 
 set background=dark
