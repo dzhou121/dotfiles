@@ -247,12 +247,3 @@ let g:EasyMotion_leader_key = '<Leader>'
 
 " CtrlP
 let g:ctrlp_custom_ignore = {'file': '\v\.pyc$'}
-
-if has("gui_macvim")
-    set macmeta
-    set guifont=Inconsolata\ for\ Powerline\:h14
-    set gcr=n:blinkon0
-
-    macmenu File.Close key=<nop>
-    map <D-w> :w<CR>
-endif
