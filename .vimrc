@@ -70,12 +70,6 @@ endif
 set guifont=Inconsolata\ for\ Powerline\ 10
 set linespace=2
 
-if has("gui_macvim")
-    set macmeta
-    set guifont=Inconsolata\ for\ Powerline\:h14
-    set gcr=n:blinkon0
-endif
-
 set background=dark
 colorscheme solarized
 
@@ -96,7 +90,7 @@ nnoremap <leader>S :%s/\s\+$//<cr>:let @/=''<CR>
 autocmd BufNewFile,BufRead *.html,*.xhtml,*.xml,*.css,*.yml,*.jinja setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
 
 map <A-n> :NERDTreeToggle<CR>
-"autocmd vimenter * NERDTree | wincmd l
+autocmd vimenter * NERDTree | wincmd l
 let NERDTreeIgnore = ['\.pyc$']
 let NERDTreeWinSize = 50 
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
@@ -116,20 +110,20 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTree
 "autocmd vimenter * TlistToggle
 
 " Tagbar
-hi link TagbarType Statement
-hi link TagbarScope Function
-let g:tagbar_left = 1
-let g:tagbar_width = 50
-let g:tagbar_autoclose = 1
-let g:tagbar_autofocus = 1
-let g:tagbar_show_linenumbers = 2
-let g:tagbar_compact = 0
-let g:tagbar_expand = 0
-let g:tagbar_indent = 4
-let g:tagbar_iconchars = ['▸', '▾']
-let g:tagbar_sort = 0
-map <A-t> :TagbarToggle<CR>
-autocmd vimenter * TagbarOpen | wincmd l
+"hi link TagbarType Statement
+"hi link TagbarScope Function
+"let g:tagbar_left = 1
+"let g:tagbar_width = 50
+"let g:tagbar_autoclose = 1
+"let g:tagbar_autofocus = 1
+"let g:tagbar_show_linenumbers = 2
+"let g:tagbar_compact = 0
+"let g:tagbar_expand = 0
+"let g:tagbar_indent = 4
+"let g:tagbar_iconchars = ['▸', '▾']
+"let g:tagbar_sort = 0
+"map <A-t> :TagbarToggle<CR>
+"autocmd vimenter * TagbarOpen | wincmd l
 
 " syntastic
 let g:syntastic_enable_signs = 1
@@ -253,3 +247,12 @@ let g:EasyMotion_leader_key = '<Leader>'
 
 " CtrlP
 let g:ctrlp_custom_ignore = {'file': '\v\.pyc$'}
+
+if has("gui_macvim")
+    set macmeta
+    set guifont=Inconsolata\ for\ Powerline\:h14
+    set gcr=n:blinkon0
+
+    macmenu File.Close key=<nop>
+    map <D-w> :w<CR>
+endif
