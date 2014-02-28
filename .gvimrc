@@ -4,8 +4,9 @@ if has("gui_macvim")
     set gcr=n:blinkon0
 
     macmenu File.Close key=<nop>
-    nnoremap <D-w> :w<CR>
-    nnoremap <D-q> :q<CR>
+    macmenu File.Save key=<nop>
+    nnoremap <D-w> :q<CR>
+    nnoremap <D-s> :w<CR>
 
     macmenu File.Print key=<nop>
     map <D-p> "+p
