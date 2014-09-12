@@ -227,6 +227,9 @@ nnoremap <leader>gs :Gstatus<CR>
 
 nnoremap <A-a> :Ack --ignore-dir=.venv <cword><CR>
 
+"dash
+nnoremap <C-k> :Dash<CR>
+
 " pig syntax
 au BufNewFile,BufRead *.pig set filetype=pig syntax=pig 
 
