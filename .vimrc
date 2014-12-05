@@ -241,7 +241,8 @@ hi LineNr guifg=#586e75 guibg=NONE
 hi CursorLineNr guifg=#586e75 guibg=#073642
 
 "let g:powerline_config_overrides = {"ext": {"vim": {"colorscheme": "solarized", "theme": "default"}}, "common": { "ambiwidth": 2}}
-set rtp+=~/.vim/bundle/powerline/powerline/bindings/vim/
+"set rtp+=~/.vim/bundle/powerline/powerline/bindings/vim/
+let g:airline_powerline_fonts = 1
 
 " khuno
 let g:khuno_ignore="E712,E711"
