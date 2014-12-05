@@ -52,3 +52,6 @@
 [submodule ".vim/bundle/ansible-yaml"]
 	path = .vim/bundle/ansible-yaml
 	url = https://github.com/chase/vim-ansible-yaml
+[submodule ".vim/bundle/python-mode"]
+	path = .vim/bundle/python-mode
+	url = https://github.com/klen/python-mode
