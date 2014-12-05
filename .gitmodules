@@ -58,9 +58,9 @@
 [submodule ".vim/bundle/airline"]
 	path = .vim/bundle/airline
 	url = https://github.com/bling/vim-airline
-[submodule ".vim/bundle/delimitMate"]
-	path = .vim/bundle/delimitMate
-	url = https://github.com/Raimondi/delimitMate
 [submodule ".vim/bundle/html5"]
 	path = .vim/bundle/html5
 	url = https://github.com/othree/html5.vim
+[submodule ".vim/bundle/auto-pairs"]
+	path = .vim/bundle/auto-pairs
+	url = https://github.com/jiangmiao/auto-pairs
