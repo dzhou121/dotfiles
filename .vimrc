@@ -262,3 +262,6 @@ let g:pymode_trim_whitespaces = 0
 
 " auto-pairs
 let g:AutoPairsShortcutJump = '<C-l>'
+
+" youcompleteme
+nnoremap <C-n> :YcmCompleter GoTo<CR>

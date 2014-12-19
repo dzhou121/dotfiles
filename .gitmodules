@@ -19,9 +19,6 @@
 [submodule ".vim/bundle/jinja"]
 	path = .vim/bundle/jinja
 	url = https://github.com/lanticezdd/vim-jinja
-[submodule ".vim/bundle/jedi-vim"]
-	path = .vim/bundle/jedi-vim
-	url = https://github.com/davidhalter/jedi-vim
 [submodule ".vim/bundle/khuno"]
 	path = .vim/bundle/khuno
 	url = https://github.com/lanticezdd/khuno.vim
@@ -40,9 +37,6 @@
 [submodule ".vim/bundle/vim-easymotion"]
 	path = .vim/bundle/vim-easymotion
 	url = https://github.com/Lokaltog/vim-easymotion
-[submodule ".vim/bundle/acp"]
-	path = .vim/bundle/acp
-	url = https://github.com/lanticezdd/AutoComplPop
 [submodule ".vim/bundle/tagbar"]
 	path = .vim/bundle/tagbar
 	url = https://github.com/majutsushi/tagbar
@@ -64,3 +58,6 @@
 [submodule ".vim/bundle/auto-pairs"]
 	path = .vim/bundle/auto-pairs
 	url = https://github.com/jiangmiao/auto-pairs
+[submodule ".vim/bundle/YouCompleteMe"]
+	path = .vim/bundle/YouCompleteMe
+	url = https://github.com/Valloric/YouCompleteMe
