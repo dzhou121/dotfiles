@@ -1,6 +1,5 @@
 if has("gui_macvim")
     set macmeta
-    set guifont=Inconsolata\ for\ Powerline\:h14
     set gcr=n:blinkon0
 
     macmenu File.Close key=<nop>

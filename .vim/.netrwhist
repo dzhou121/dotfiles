@@ -1,4 +1,6 @@
 let g:netrw_dirhistmax  =10
-let g:netrw_dirhist_cnt =2
+let g:netrw_dirhist_cnt =4
 let g:netrw_dirhist_1='/home/dongdong/dotfiles/.vim/bundle/pyflake8'
 let g:netrw_dirhist_2='/home/dongdong/blbag/uni/uni/views'
+let g:netrw_dirhist_3='/Users/Lulu/blbag/aura'
+let g:netrw_dirhist_4='/Users/Lulu/blbag/aura/aura.egg-info'

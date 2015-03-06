@@ -67,7 +67,7 @@ if has("gui_running")
     set lines=999 columns=999
 endif
 
-set guifont=Inconsolata\ for\ Powerline\ 10
+set guifont=Inconsolata-dz\ for\ Powerline:h12
 set linespace=2
 
 set background=dark
@@ -92,8 +92,28 @@ autocmd BufNewFile,BufRead *.html,*.xhtml,*.xml,*.css,*.yml,*.jinja setlocal exp
 map <A-n> :NERDTreeToggle<CR>
 autocmd vimenter * NERDTree | wincmd l
 let NERDTreeIgnore = ['\.pyc$']
-let NERDTreeWinSize = 50 
+let NERDTreeWinSize = 30 
+"let NERDTreeWinPos = 'right' 
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
+
+" Tagbar
+hi link TagbarKind Function
+hi link TagbarNestedKind Function
+hi link TagbarSignature Function
+hi link TagbarType Statement
+hi link TagbarScope Type
+"let g:tagbar_left = 1
+let g:tagbar_width = 30
+let g:tagbar_autoclose = 1
+let g:tagbar_autofocus = 1
+let g:tagbar_show_linenumbers = 0
+"let g:tagbar_compact = 1
+"let g:tagbar_expand = 1
+let g:tagbar_indent = 2
+let g:tagbar_iconchars = ['▸', '▾']
+"let g:tagbar_sort = 0
+"map <A-t> :TagbarToggle<CR>
+autocmd vimenter * TagbarOpen | wincmd l
 
 " Taglist
 " map <A-t> :TlistToggle<CR>
@@ -108,22 +128,6 @@ autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTree
 "let Tlist_Auto_Open = 1
 "let Tlist_Show_One_File = 1
 "autocmd vimenter * TlistToggle
-
-" Tagbar
-"hi link TagbarType Statement
-"hi link TagbarScope Function
-"let g:tagbar_left = 1
-"let g:tagbar_width = 50
-"let g:tagbar_autoclose = 1
-"let g:tagbar_autofocus = 1
-"let g:tagbar_show_linenumbers = 2
-"let g:tagbar_compact = 0
-"let g:tagbar_expand = 0
-"let g:tagbar_indent = 4
-"let g:tagbar_iconchars = ['▸', '▾']
-"let g:tagbar_sort = 0
-"map <A-t> :TagbarToggle<CR>
-"autocmd vimenter * TagbarOpen | wincmd l
 
 " syntastic
 let g:syntastic_enable_signs = 1
@@ -209,19 +213,19 @@ fu! CustomFoldText()
 endf
 
 " Add the virtualenv's site-packages to vim path
-if has('python')
-py << EOF
-import os.path
-import sys
-import vim
-cwd = os.getcwd()
-virutal_env = os.path.join(cwd, '.venv')
-if os.path.exists(virutal_env):
-    sys.path.insert(0, virutal_env)
-    activate_this = os.path.join(virutal_env, 'bin/activate_this.py')
-    execfile(activate_this, dict(__file__=activate_this))
-EOF
-endif
+"if has('python')
+"py << EOF
+"import os.path
+"import sys
+"import vim
+"cwd = os.getcwd()
+"virutal_env = os.path.join(cwd, '.venv')
+"if os.path.exists(virutal_env):
+"    sys.path.insert(0, virutal_env)
+"    activate_this = os.path.join(virutal_env, 'bin/activate_this.py')
+"    execfile(activate_this, dict(__file__=activate_this))
+"EOF
+"endif
 
 " git commands
 nnoremap <leader>gs :Gstatus<CR>
