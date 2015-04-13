@@ -24,4 +24,10 @@ if has("gui_macvim")
     nnoremap <D-h> <C-w>h
     nnoremap <D-j> <C-w>j
     nnoremap <D-k> <C-w>k
+
+    nnoremap <D-1> 1gt
+    nnoremap <D-2> 2gt
+    nnoremap <D-3> 3gt
+    nnoremap <D-4> 4gt
+    nnoremap <D-5> 5gt
 endif

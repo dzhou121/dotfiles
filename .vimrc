@@ -1,4 +1,27 @@
-call pathogen#infect()
+"call pathogen#infect()
+call plug#begin('~/.vim/plugged')
+
+Plug 'mileszs/ack.vim'
+Plug 'chase/vim-ansible-yaml'
+Plug 'kchmck/vim-coffee-script'
+Plug 'kien/ctrlp.vim'
+Plug 'rizzatti/dash.vim'
+Plug 'tpope/vim-fugitive'
+Plug 'gregsexton/gitv'
+Plug 'lanticezdd/vim-jinja'
+Plug 'lanticezdd/khuno.vim'
+Plug 'scrooloose/nerdtree'
+Plug 'vim-scripts/SearchComplete'
+Plug 'altercation/vim-colors-solarized'
+Plug 'Lokaltog/vim-easymotion'
+Plug 'klen/python-mode'
+Plug 'bling/vim-airline'
+Plug 'othree/html5.vim'
+Plug 'jiangmiao/auto-pairs'
+Plug 'Valloric/YouCompleteMe'
+Plug 'majutsushi/tagbar'
+
+call plug#end()
 
 " Don't be compatible with vi
 set nocompatible
@@ -68,7 +91,7 @@ if has("gui_running")
 endif
 
 set guifont=Inconsolata-dz\ for\ Powerline:h12
-set linespace=2
+set linespace=4
 
 set background=dark
 colorscheme solarized
@@ -89,7 +112,7 @@ nnoremap <leader>S :%s/\s\+$//<cr>:let @/=''<CR>
 " Templates to HTML
 autocmd BufNewFile,BufRead *.html,*.xhtml,*.xml,*.css,*.yml,*.jinja setlocal expandtab shiftwidth=2 tabstop=2 softtabstop=2
 
-map <A-n> :NERDTreeToggle<CR>
+map <leader>n :NERDTreeToggle<CR>
 autocmd vimenter * NERDTree | wincmd l
 let NERDTreeIgnore = ['\.pyc$']
 let NERDTreeWinSize = 30 
@@ -112,7 +135,7 @@ let g:tagbar_show_linenumbers = 0
 let g:tagbar_indent = 2
 let g:tagbar_iconchars = ['▸', '▾']
 "let g:tagbar_sort = 0
-"map <A-t> :TagbarToggle<CR>
+map <leader>t :TagbarToggle<CR>
 autocmd vimenter * TagbarOpen | wincmd l
 
 " Taglist
@@ -269,3 +292,4 @@ let g:AutoPairsShortcutJump = '<C-l>'
 
 " youcompleteme
 nnoremap <C-n> :YcmCompleter GoTo<CR>
+"let g:ycm_goto_buffer_command = 'new-tab'

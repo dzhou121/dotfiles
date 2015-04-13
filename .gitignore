@@ -4,3 +4,4 @@
 *.un~
 .vim/view/*
 .vim/view/*.*
+.vim/plugged/*
