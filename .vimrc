@@ -236,19 +236,19 @@ fu! CustomFoldText()
 endf
 
 " Add the virtualenv's site-packages to vim path
-"if has('python')
-"py << EOF
-"import os.path
-"import sys
-"import vim
-"cwd = os.getcwd()
-"virutal_env = os.path.join(cwd, '.venv')
-"if os.path.exists(virutal_env):
-"    sys.path.insert(0, virutal_env)
-"    activate_this = os.path.join(virutal_env, 'bin/activate_this.py')
-"    execfile(activate_this, dict(__file__=activate_this))
-"EOF
-"endif
+if has('python')
+py << EOF
+import os.path
+import sys
+import vim
+cwd = os.getcwd()
+virutal_env = os.path.join(cwd, '.venv')
+if os.path.exists(virutal_env):
+    sys.path.insert(0, virutal_env)
+    activate_this = os.path.join(virutal_env, 'bin/activate_this.py')
+    execfile(activate_this, dict(__file__=activate_this))
+EOF
+endif
 
 " git commands
 nnoremap <leader>gs :Gstatus<CR>
@@ -293,3 +293,5 @@ let g:AutoPairsShortcutJump = '<C-l>'
 " youcompleteme
 nnoremap <C-n> :YcmCompleter GoTo<CR>
 "let g:ycm_goto_buffer_command = 'new-tab'
+
+map <leader>f <Plug>(easymotion-s2)
